@@ -1,0 +1,15 @@
+# Dependencies
+FrontEnd/Helperz/node_modules/
+helperz-backend/node_modules/
+
+# Environment variables
+.env
+.envFiles/
+FrontEnd/Helperz/.env
+helperz-backend/.env
+
+# Build files
+FrontEnd/Helperz/dist/
+
+# Logs
+*.log
