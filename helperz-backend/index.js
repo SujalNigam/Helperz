@@ -6,9 +6,13 @@ const cors = require('cors');
 env.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
-mongoose.connect(process.env.MONGO_URI);
+
 
 
 const userRoutes = require('./routes/userRoutes');
@@ -21,4 +25,23 @@ app.use('/api/services', serviceRoutes);
 
 app.use('/api/bookings', bookingRoutes);
 
-app.listen(process.env.PORT, ()=>console.log("App listening at port 8000"));
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB Connected");
+
+    const PORT = process.env.PORT || 8000;
+
+    app.listen(PORT, () => {
+      console.log(`Server listening on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+// mongoose.connect(process.env.MONGO_URI);
+// const PORT = process.env.PORT || 8000;
+
+// app.listen(PORT, () => {
+//     console.log(`Server listening on port ${PORT}`);
+// });
