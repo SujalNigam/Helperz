@@ -9,7 +9,7 @@ import { deleteService, getProviderServices } from "../../api/services";
 import { getProviderBookings } from "../../api/bookings";
 import { useQuery,useQueryClient,useMutation } from "@tanstack/react-query";
 import { updateBookingStatus } from "../../api/bookings";
-import ConfirmModal from "../../components/confirmModal";
+import ConfirmModal from "../../components/ConfirmModal";
 import toast from 'react-hot-toast';
 
 
