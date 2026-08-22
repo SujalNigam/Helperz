@@ -6,7 +6,7 @@ import { getMe } from './api/auth';
 import useAuthStore from './store/authStore';
 // import CreateService from './pages/provider/CreateService';
 // import ServiceDetail from './pages/ServiceDetail';
-
+import {BarLoader} from 'react-spinners';
 const Home = lazy(() => import('./pages/customer/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -22,6 +22,8 @@ const NotFound = lazy(()=>import('./pages/NotFound'));
 // import EditService from './pages/provider/EditService';
 const EditService = lazy(()=>import('./pages/provider/EditService'));
 const Profile = lazy(()=>import('./pages/Profile'));
+const GenerateSlots = lazy(()=>import('./pages/provider/GenerateSlots'));
+const ManageSlots = lazy(()=>import('./pages/provider/ManageSlots'));
 
 function App() {
  useEffect(() => {
@@ -33,7 +35,7 @@ function App() {
   }
 }, []);
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div><BarLoader/></div>}>
     <NavBar/>
       <Routes>
         <Route path='/' element={<Home />} />
@@ -74,7 +76,18 @@ function App() {
                   <CreateService /> 
             </ProtectedRoutes>} />
 
+            <Route path='/provider/services/:id/generate-slots' element={<ProtectedRoutes allowedRole={'provider'}>
+                  <GenerateSlots /> 
+            </ProtectedRoutes>} />
+
+            <Route path='/provider/services/:id/manage-slots' element={<ProtectedRoutes allowedRole={'provider'}>
+                  <ManageSlots /> 
+            </ProtectedRoutes>} />
+
             <Route path='*' element={<NotFound />} />
+
+
+            
        
       </Routes>
     </Suspense>

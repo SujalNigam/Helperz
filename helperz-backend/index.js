@@ -16,12 +16,14 @@ app.use(express.json());
 
 
 const userRoutes = require('./routes/userRoutes');
+const slotRoutes = require("./routes/slotRoutes");
 const authRoutes = require('./routes/authRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
+app.use("/api/slots", slotRoutes);
 
 app.use('/api/bookings', bookingRoutes);
 

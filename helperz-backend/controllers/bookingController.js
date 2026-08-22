@@ -1,13 +1,21 @@
 const Booking = require('../models/Booking');
+const Slot = require('../models/Slot');
+const Service = require('../models/Service');
 // const authMiddleware = require('../middleware/authMiddleware');
 
 
 const createBooking = async (req, res) => {
+
+
     try {
-        const { serviceId, time, price, providerId,address, name } = req.body;
+        // TODO: Make slot booking atomic or use MongoDB transaction. To prevent race conditions when two customers book simultaneously.
+        
+        // const { slotId, serviceId, price, providerId,address, name } = req.body;
+        const { slotId, address, contactName,contactNumber } = req.body;
 
         const customerId = req.user.id;
         const role = req.user.role;
+        
 
         if(!role){
             console.log('Not Logged In');
@@ -18,16 +26,53 @@ const createBooking = async (req, res) => {
             console.log('Other than customer trying to create booking. Not possible!')
             return res.status(400).json({message:'Other than customer trying to create booking. Not possible!'})
         }
+        if (!slotId || !contactName || !address || !contactNumber) {
+            return res.status(400).json({
+                message: "All fields are required."
+            });
+        }
+
+        const existingBooking = await Booking.findOne({
+            slotId
+        });
+
+        if (existingBooking) {
+            return res.status(400).json({
+                message: "Slot already booked."
+            });
+        }
+
+        const slot = await Slot.findById(slotId);
+        if(!slot ){
+            return res.status(400).json({message:"Slot doesnot exists"});
+        }
+        if( slot.status!='available'){
+            return res.status(400).json({message:"Slot is no longer available."});
+        }
+        const service = await Service.findById(slot.serviceId);
+        if (!service) {
+            return res.status(404).json({
+                message: "Service not found."
+            });
+        }
+
+
 
         const booking = await Booking.create({
-            serviceId,
-            time,
-            price,
-            providerId,
+            contactName,
+            serviceId: service._id,
+            serviceName: service.title,
+            price: service.price,
+            providerId: service.providerId,
             customerId,
             address,
-            name
+            slotId,
+            contactNumber
         });
+
+        slot.status = "booked";
+
+        await slot.save();
 
         return res.status(201).json({
             message: "Booking created successfully",
@@ -46,7 +91,8 @@ const getProviderBookings = async(req, res)=>{
         const providerId = req.user.id;
        const bookings = await Booking.find({providerId:providerId})
        .populate('customerId','name email')
-       .populate('serviceId','title price');
+       .populate('serviceId','title price')
+       .populate('slotId','date time');
 
 
         if(!bookings){
@@ -65,7 +111,8 @@ const getBookings = async(req, res)=>{
        const role = req.user.role;
        const bookings = await Booking.find()
        .populate('customerId','name email')
-       .populate('serviceId','title price');
+       .populate('serviceId','title price')
+       .populate('slotId','date time');
         
 
         if(!bookings){
@@ -84,7 +131,8 @@ const getCustomerBookings = async(req, res)=>{
         const customerId = req.user.id;
        const bookings = await Booking.find({customerId:customerId})
        .populate('customerId','name email')
-       .populate('serviceId','title price');
+       .populate('serviceId','title price')
+       .populate('slotId','date time');
 
 
         if(!bookings){
@@ -106,10 +154,22 @@ const updateBookingStatus = async(req,res)=>{
         if(!bookingId){
             return res.status(401).json({message:'bookingId not reached to backend'});
         }
+        
 
-        const booking = await Booking.findByIdAndUpdate({_id: bookingId},{
-            status
-        },{new:true});
+        const booking = await Booking.findById(bookingId);
+        if (!booking) {
+            return res.status(404).json({
+                message: "Booking not found."
+            });
+        }
+        if(booking.providerId.toString() !== req.user.id){
+            return res.status(400).json({message:'You can only update your bookings'});
+        }
+        booking.status = status;
+        await booking.save();
+        // const booking = await Booking.findByIdAndUpdate({_id: bookingId},{
+        //     status
+        // },{new:true});
 
 
 

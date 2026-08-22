@@ -2,11 +2,16 @@ import React from 'react'
 import { useForm } from 'react-hook-form';
 // import { useParams } from 'react-router-dom';
 // import { services } from '../../utils/dummyData';
-// import { useState } from 'react';
+import { useState } from 'react';
 import { createService } from '../../api/services';
+import { useNavigate } from "react-router-dom";
+
+
 import { useQueryClient,useMutation } from '@tanstack/react-query';
 
 function CreateService() {
+  const navigate = useNavigate();
+  const [preview, setPreview] = useState(null);
 // const [isCreated, setIsCreated] = useState(false);
 
 const queryClient = useQueryClient();
@@ -22,13 +27,21 @@ const {
 
 const mutation = useMutation({
   mutationFn: createService,
-  onSuccess: () => {
+
+  onSuccess: (data) => {
     queryClient.invalidateQueries(['providerServices']);
+
+    const serviceId = data.service._id;
+
+    navigate(`/provider/services/${service._id}/generate-slots`, {
+    state: { from: "create" }
+});
   },
-   onError: (error) => {
+
+  onError: (error) => {
     console.log(error.message);
   }
-})
+});
 
     
 
@@ -64,28 +77,40 @@ const mutation = useMutation({
   Service Image
 </label> */}
 
-<input
-  type="file"
-  accept="image/*"
+<input type="file" accept="image/*" {...register("image")} 
   className="w-full rounded-md border-2 border-gray-700 bg-white p-2
              file:mr-4 file:rounded-md file:border-0
              file:bg-gray-700 file:px-4 file:py-2
              file:text-white hover:file:bg-gray-800"
-  {...register("image", {
-    required: "Image is required",
-  })}
-/>
+onChange={(e) => {
+                    const file = e.target.files[0];
+
+                    if (file) {
+                    setPreview(URL.createObjectURL(file));
+                    }
+                    
+                 }}/>
 
 {errors.image && (
   <p className="text-red-600">{errors.image.message}</p>
 )}
+
+                  {
+                    preview && (
+                    <img
+                        src={preview}
+                        alt="Preview"
+                        className="w-48 h-32 object-cover rounded-md"
+                    />
+                    )
+                  }
 
             {errors.icon && <p>{errors.icon.message}</p>}
             <input className='text-black border-b-2 border-gray-400 rounded-sm' type='number' {...register("price", {required:'Price is required'})}/>
             {errors.price && <p>{errors.price.message}</p>}
             <input className='text-black border-b-2 border-gray-400 rounded-sm' placeholder='It is a service description' type='text' {...register("description", {required:'Description is required'})}/>
             {errors.description && <p>{errors.description.message}</p>}
-            <button className='bg-gray-700 text-white p-2 m-4 rounded-md '  type='submit'>Create Service</button>
+            <button className='bg-gray-700 text-white p-2 m-4 rounded-md '  type='submit' >Create Service</button>
      </form>
      {/* {isCreated && mutation.isSuccess && <p className='text-green-600 text-xl'>Service Created Successfully! 🎉</p>} */}
      {mutation.isSuccess && <p className='text-green-600 text-xl'>Service Created Successfully! 🎉</p>}

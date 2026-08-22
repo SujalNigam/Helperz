@@ -56,7 +56,16 @@ function ServiceDetail() {
                     e.stopPropagation();
                     onDelete(data.service._id)}
                     }
-                    className='bg-red-600 rounded text-white p-1 text-sm m-1'>Delete</button> 
+                    className='bg-red-600 rounded text-white p-1 text-sm m-1'>Delete</button>
+
+                    <button onClick={(e)=>{
+                    e.stopPropagation();
+                  
+                    navigate(`/provider/services/${data.service._id}/manage-slots`);}
+                    }
+                    className='bg-green-600 rounded text-white p-1 text-sm m-1'>Manage Slots</button> 
+
+                    
 
                     <button onClick={(e)=>{
                     e.stopPropagation();

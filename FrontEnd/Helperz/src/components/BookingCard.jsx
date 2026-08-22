@@ -8,8 +8,8 @@ function BookingCard({
   showCancel,
   onCancel
 }) {
-  const customerName = booking.name || booking.customerId?.name;
-
+  const customerName = booking.contactName || booking.customerId?.contactName;
+  // console.log(booking);
   const statusColors = {
     pending: "bg-yellow-100 text-yellow-700",
     accepted: "bg-green-100 text-green-700",
@@ -30,8 +30,14 @@ function BookingCard({
       </p>
 
       <p className="text-gray-500">
-        {formatDate(booking.time)}
-      </p>
+    {booking.slotId &&
+        `${new Date(booking.slotId.date).toLocaleDateString("en-IN", {
+            weekday: "short",
+            day: "numeric",
+            month: "short"
+        })} at ${booking.slotId.time}`
+    }
+</p>
 
       <div className="mt-4 flex items-center justify-between">
 
