@@ -10,10 +10,13 @@ export const getBookings = async () => {
   return response.data;
 };
 
-export const getCustomerBookings = async ()=>{
-    const response = await axiosInstance.get('/bookings/getCustomerBookings');
+export const getCustomerBookings = async (page = 1, limit = 5) => {
+    const response = await axiosInstance.get(
+        `/bookings/getCustomerBookings?page=${page}&limit=${limit}`
+    );
+
     return response.data;
-}
+};
 
 export const createBooking = async (data)=>{
     const response = await axiosInstance.post('/bookings/createBooking',data);

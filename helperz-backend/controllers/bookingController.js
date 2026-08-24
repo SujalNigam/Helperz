@@ -129,16 +129,29 @@ const getBookings = async(req, res)=>{
 const getCustomerBookings = async(req, res)=>{
     try{
         const customerId = req.user.id;
-       const bookings = await Booking.find({customerId:customerId})
+        const { page = 1, limit = 5 } = req.query;
+
+        const pageNumber = Number(page);
+        // const currentPage = pageNumber;
+        const limitNumber = Number(limit);
+
+        const skip = (pageNumber - 1) * limitNumber;
+        const totalBookings = await Booking.countDocuments({customerId:customerId});
+        const totalPages = Math.ceil(totalBookings / limitNumber);
+        const hasNextPage = pageNumber < totalPages;
+       const bookings = await Booking.find({customerId:customerId}).skip(skip).limit(limitNumber)
        .populate('customerId','name email')
        .populate('serviceId','title price')
        .populate('slotId','date time');
 
 
-        if(!bookings){
-            return res.status(401).json({message:'Could not fetch Bookings from DB'});
-        }
-        return res.status(200).json({message:'Bookings are fetched successfully',bookings:bookings});
+        return res.status(200).json({message:'Bookings are fetched successfully',bookings:bookings,pagination: {
+        currentPage:pageNumber,
+        totalPages,
+        totalBookings,
+        hasNextPage
+    }});
+
     }
     catch(error){
         console.log(error);

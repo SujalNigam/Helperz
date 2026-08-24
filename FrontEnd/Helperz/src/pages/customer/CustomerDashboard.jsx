@@ -51,8 +51,8 @@ function CustomerDashboard() {
         queryFn: getServices,         // the function that fetches data
     });
     const { data:dataB, isLoading:isLoadingB, isError:isErrorB, error:errorB } = useQuery({
-        queryKey: ['bookings'],       // unique cache key
-        queryFn: getCustomerBookings,         // the function that fetches data
+        queryKey: ['bookings',1],       // unique cache key
+        queryFn: () => getCustomerBookings(2,2),         // the function that fetches data
     });
     if (!savedUser) return <p>Loading...</p>;
 
