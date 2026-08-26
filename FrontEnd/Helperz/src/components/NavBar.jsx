@@ -16,15 +16,11 @@ function NavBar() {
     flex justify-between
     items-center 
     p-3
-    // bg-slate-900 
-    // backdrop-blur-xl 
-    // shadow-md
    bg-white/20
     backdrop-blur-xl
     border-b border-white/20
     shadow-lg
-
-    supports-[backdrop-filter]:bg-white/10
+  supports-backdrop-filter:bg-white/10
     sticky top-0
     z-50
     
@@ -39,6 +35,7 @@ function NavBar() {
                 <ul className=' flex items-center justify-center gap-4'>
                     <li className='li-nav'> <NavLink to='/'>Home</NavLink></li>
                     <li className='li-nav'> <NavLink to={`/${savedRole}/dashboard`}>Dashboard</NavLink></li>
+                    <li className='li-nav'> <NavLink to={`/${savedRole}/my-bookings`}>MyBookings</NavLink></li>
                 </ul>
 
                 <ul className=' flex items-center justify-center gap-4'>   

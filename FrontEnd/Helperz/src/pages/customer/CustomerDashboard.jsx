@@ -39,9 +39,7 @@ function CustomerDashboard() {
     })
 
     const handleCancel = (id) => {
-            // const b = await cancelBooking(id);
             cancelMutation.mutate(id);
-            // console.log("request is cancelled", id);
         }
     
         
@@ -52,7 +50,7 @@ function CustomerDashboard() {
     });
     const { data:dataB, isLoading:isLoadingB, isError:isErrorB, error:errorB } = useQuery({
         queryKey: ['bookings',1],       // unique cache key
-        queryFn: () => getCustomerBookings(2,2),         // the function that fetches data
+        queryFn: () => getCustomerBookings(1,2,'upcoming'),         // the function that fetches data
     });
     if (!savedUser) return <p>Loading...</p>;
 
@@ -61,9 +59,6 @@ function CustomerDashboard() {
     <>
 
     <h1 className='text-blue-600 text-2xl'>Hi {savedUser.name}! CustomerDashboard</h1>
-
-    {/* <button onClick={logoutHandler}>LogOut</button> */}
-
 
         {/* customer's booked bookings  */}
         <div className='mb-2'>
@@ -76,20 +71,28 @@ function CustomerDashboard() {
             }) ))
         }
             </div>
+            <div className="flex justify-center mt-4">
+                <button
+                    className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                    onClick={() => navigate('/customer/my-bookings')}
+                >
+                    View All Bookings →
+                </button>
+            </div>
         </div>
 
 
 
 
         {/* -------------------------Services Search------------------ */}
-        <div>
+        {/* <div>
             <input
             type="text"
             placeholder="Search services..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             />
-        </div>
+        </div> */}
      {/* ----------------------Services showing-------------------- */}
         <div>
             <h2 className='flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 '>Popular Services</h2>

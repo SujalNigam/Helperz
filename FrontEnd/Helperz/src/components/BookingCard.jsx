@@ -9,6 +9,7 @@ function BookingCard({
   onCancel
 }) {
   const customerName = booking.contactName || booking.customerId?.contactName;
+  const appointmentPassed = new Date(booking.appointmentDateTime) < new Date();
   // console.log(booking);
   const statusColors = {
     pending: "bg-yellow-100 text-yellow-700",
@@ -22,7 +23,7 @@ function BookingCard({
 
       {/* Service */}
       <h2 className="text-xl font-semibold text-gray-800">
-        {booking.serviceId.title}
+        {booking.serviceName}
       </h2>
 
       <p className="text-gray-500 mt-1">
@@ -30,12 +31,12 @@ function BookingCard({
       </p>
 
       <p className="text-gray-500">
-    {booking.slotId &&
-        `${new Date(booking.slotId.date).toLocaleDateString("en-IN", {
+    {booking.slot &&
+        `${new Date(booking.slot.date).toLocaleDateString("en-IN", {
             weekday: "short",
             day: "numeric",
             month: "short"
-        })} at ${booking.slotId.time}`
+        })} at ${booking.slot.time}`
     }
 </p>
 
@@ -77,7 +78,7 @@ function BookingCard({
         </div>
       )}
 
-      {booking.status === "pending" && showCancel && (
+      {booking.status === "pending" &&!appointmentPassed && showCancel && (
         <button
           onClick={() => onCancel(booking._id)}
           className="mt-5 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg"

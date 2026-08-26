@@ -10,9 +10,13 @@ export const getBookings = async () => {
   return response.data;
 };
 
-export const getCustomerBookings = async (page = 1, limit = 5) => {
+export const getCustomerBookings = async (
+    page = 1,
+    limit = 5,
+    type = 'upcoming'
+) => {
     const response = await axiosInstance.get(
-        `/bookings/getCustomerBookings?page=${page}&limit=${limit}`
+        `/bookings/getCustomerBookings?page=${page}&limit=${limit}&type=${type}`
     );
 
     return response.data;

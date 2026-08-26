@@ -4,6 +4,7 @@ import ProtectedRoutes from './components/ProtectedRoutes';
 import NavBar from './components/NavBar';
 import { getMe } from './api/auth';
 import useAuthStore from './store/authStore';
+
 // import CreateService from './pages/provider/CreateService';
 // import ServiceDetail from './pages/ServiceDetail';
 import {BarLoader} from 'react-spinners';
@@ -24,6 +25,9 @@ const EditService = lazy(()=>import('./pages/provider/EditService'));
 const Profile = lazy(()=>import('./pages/Profile'));
 const GenerateSlots = lazy(()=>import('./pages/provider/GenerateSlots'));
 const ManageSlots = lazy(()=>import('./pages/provider/ManageSlots'));
+const MyBookings = lazy(()=> import('./pages/customer/MyBookings'));
+
+
 
 function App() {
  useEffect(() => {
@@ -46,6 +50,11 @@ function App() {
         <Route path='/customer/dashboard' element={
           <ProtectedRoutes allowedRole={'customer'}>
               <CustomerDashboard />
+          </ProtectedRoutes>
+          } />
+        <Route path='/customer/my-bookings' element={
+          <ProtectedRoutes allowedRole={'customer'}>
+              <MyBookings />
           </ProtectedRoutes>
           } />
         <Route path='/provider/dashboard' element={<ProtectedRoutes allowedRole={'provider'}>

@@ -1,6 +1,7 @@
 const Booking = require('../models/Booking');
 const Slot = require('../models/Slot');
 const Service = require('../models/Service');
+const mongoose = require("mongoose");
 // const authMiddleware = require('../middleware/authMiddleware');
 
 
@@ -129,20 +130,121 @@ const getBookings = async(req, res)=>{
 const getCustomerBookings = async(req, res)=>{
     try{
         const customerId = req.user.id;
-        const { page = 1, limit = 5 } = req.query;
+        const { page = 1, limit = 5,type='upcoming' } = req.query;
 
         const pageNumber = Number(page);
         // const currentPage = pageNumber;
         const limitNumber = Number(limit);
-
+        const now = new Date();
         const skip = (pageNumber - 1) * limitNumber;
-        const totalBookings = await Booking.countDocuments({customerId:customerId});
-        const totalPages = Math.ceil(totalBookings / limitNumber);
-        const hasNextPage = pageNumber < totalPages;
-       const bookings = await Booking.find({customerId:customerId}).skip(skip).limit(limitNumber)
-       .populate('customerId','name email')
-       .populate('serviceId','title price')
-       .populate('slotId','date time');
+        // const totalBookings = await Booking.countDocuments({customerId:customerId});
+        // const totalPages = Math.ceil(totalBookings / limitNumber);
+        // const hasNextPage = pageNumber < totalPages;
+
+    //    const bookings = await Booking.find({customerId:customerId}).skip(skip).limit(limitNumber)
+    //    .populate('customerId','name email')
+    //    .populate('serviceId','title price')
+    //    .populate('slotId','date time');
+    
+    if (type !== "upcoming" && type !== "past") {
+    return res.status(400).json({
+        message: "Invalid booking type"
+    });
+}
+
+    const dateFilter =
+    type === "past"
+        ? { $lt: now }
+        : { $gte: now };
+
+    const sortOrder = type === "past" ? -1 : 1;
+
+   const result = await Booking.aggregate([
+    {
+        $match: {
+            customerId: new mongoose.Types.ObjectId(customerId)
+        }
+    },
+
+    {
+        $lookup: {
+            from: "slots",
+            localField: "slotId",
+            foreignField: "_id",
+            as: "slot"
+        }
+    },
+
+    {
+        $unwind: "$slot"
+    },
+
+    {
+        $set: {
+            appointmentDateTime: {
+                $dateFromParts: {
+                    year: { $year: "$slot.date" },
+                    month: { $month: "$slot.date" },
+                    day: { $dayOfMonth: "$slot.date" },
+                    hour: {
+                        $toInt: {
+                            $arrayElemAt: [
+                                { $split: ["$slot.time", ":"] },
+                                0
+                            ]
+                        }
+                    },
+                    minute: {
+                        $toInt: {
+                            $arrayElemAt: [
+                                { $split: ["$slot.time", ":"] },
+                                1
+                            ]
+                        }
+                    },
+                    timezone: "Asia/Kolkata"
+                }
+            }
+        }
+    },
+    {
+        $match: {
+            appointmentDateTime: dateFilter
+        }
+    },
+    {
+    $facet: {
+        totalBookings:[
+            {
+                $count: 'total'
+            }
+        ],
+        data:[
+            {
+            $sort: {
+                appointmentDateTime: sortOrder
+            }
+            },
+            {
+            $skip: skip
+            },
+            {
+                $limit: limitNumber
+            }
+        ]
+    }
+    }
+    
+]);
+const totalBookings = result[0].totalBookings[0]?.total || 0;
+
+const bookings = result[0].data;
+
+const totalPages = Math.ceil(totalBookings / limitNumber);
+
+const hasNextPage = pageNumber < totalPages;
+
+console.log('Customer BOokings',bookings);
 
 
         return res.status(200).json({message:'Bookings are fetched successfully',bookings:bookings,pagination: {
@@ -206,14 +308,44 @@ const cancelBooking = async(req,res)=>{
         //     status:'cancelled'
         // },{new:true});
 
-        const existingBooking = await Booking.findOne({_id:bookingId});
+        const existingBooking = await Booking.findById(bookingId)
+            .populate('slotId', 'date time');
 
-        if(userRole!='customer'){
-            return res.status(400).json({message:"Role is not customer"});
-        }
+            
+            if(userRole!='customer'){
+                return res.status(400).json({message:"Role is not customer"});
+            }
+
+            if (!existingBooking) {
+                return res.status(404).json({
+                    message: "Booking not found."
+                });
+            }
 
         if(userId!=existingBooking.customerId.toString()){
             return res.status(400).json({message:"You are trying to delete someone else's booking. Not possible!"});
+        }
+
+        const slot = existingBooking.slotId;
+
+        const [hours, minutes] = slot.time.split(':');
+
+        const appointmentDateTime = new Date(slot.date);
+        appointmentDateTime.setHours(
+            Number(hours),
+            Number(minutes),
+            0,
+            0
+        );
+
+        if (appointmentDateTime < new Date()) {
+            return res.status(400).json({
+                message: "Past appointments cannot be cancelled."
+            });
+        }
+
+        if(userRole!='customer'){
+            return res.status(400).json({message:"Role is not customer"});
         }
 
         const updatedBooking = await Booking.findByIdAndUpdate({_id: bookingId},{

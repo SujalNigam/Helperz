@@ -8,6 +8,7 @@
   .li-nav {
     @apply bg-green-500 text-white p-1.5 rounded-sm hover:bg-green-700 transition mx-2;
   }
+ 
   .btn-home {
     @apply bg-green-500 text-white px-1 py-1 rounded-sm hover:bg-green-700 transition mx-2;
   }
