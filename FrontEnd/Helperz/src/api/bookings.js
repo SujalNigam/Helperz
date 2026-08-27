@@ -1,7 +1,10 @@
 import axiosInstance from "./axiosInstance";
 
-export const getProviderBookings = async ()=>{
-    const response = await axiosInstance.get('/bookings/getProviderBookings');
+export const getProviderBookings = async (page, limit, type) => {
+    const response = await axiosInstance.get(
+        `/bookings/getProviderBookings?page=${page}&limit=${limit}&type=${type}`
+    );
+
     return response.data;
 }
 

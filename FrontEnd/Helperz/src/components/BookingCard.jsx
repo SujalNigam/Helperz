@@ -17,6 +17,8 @@ function BookingCard({
     rejected: "bg-red-100 text-red-700",
     cancelled: "bg-gray-200 text-gray-700"
   };
+  const isExpired =
+    booking.status === "pending" && appointmentPassed;
 
   return (
     <div className="w-full max-w-md bg-white rounded-xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition">
@@ -44,10 +46,12 @@ function BookingCard({
 
         <span
           className={`px-3 py-1 rounded-full text-sm font-medium ${
-            statusColors[booking.status]
+            isExpired
+              ? "bg-gray-200 text-gray-700"
+              : statusColors[booking.status]
           }`}
         >
-          {booking.status}
+          {isExpired ? "Expired" : booking.status}
         </span>
 
         <span className="font-bold text-green-600">
@@ -56,7 +60,9 @@ function BookingCard({
 
       </div>
 
-      {booking.status === "pending" && showActions && (
+    {booking.status === "pending" &&
+      showActions &&
+      !appointmentPassed && (
         <div className="flex gap-3 mt-5">
           <button
             onClick={() =>
@@ -76,7 +82,7 @@ function BookingCard({
             Reject
           </button>
         </div>
-      )}
+    )}
 
       {booking.status === "pending" &&!appointmentPassed && showCancel && (
         <button

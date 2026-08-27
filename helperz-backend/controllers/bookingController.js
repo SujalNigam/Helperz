@@ -90,16 +90,128 @@ const createBooking = async (req, res) => {
 const getProviderBookings = async(req, res)=>{
     try{
         const providerId = req.user.id;
-       const bookings = await Booking.find({providerId:providerId})
-       .populate('customerId','name email')
-       .populate('serviceId','title price')
-       .populate('slotId','date time');
+        const { page = 1, limit = 5,type='upcoming' } = req.query;
 
+        const pageNumber = Number(page);
+        const limitNumber = Number(limit);
+        const now = new Date();
+        const skip = (pageNumber - 1) * limitNumber;
+    //    const bookings = await Booking.find({providerId:providerId})
+    //    .populate('customerId','name email')
+    //    .populate('serviceId','title price')
+    //    .populate('slotId','date time');
 
-        if(!bookings){
-            return res.status(401).json({message:'Could not fetch Bookings from DB'});
+    if (type !== "upcoming" && type !== "past") {
+        return res.status(400).json({
+            message: "Invalid booking type"
+        });
+    }
+
+    const dateFilter =
+    type === "past"
+        ? { $lt: now }
+        : { $gte: now };
+
+    const sortOrder = type === "past" ? -1 : 1;
+
+    //    const bookings = await Booking.find({providerId:providerId})
+    //    .
+    const result = await Booking.aggregate([
+        {
+            $match: {
+                providerId: new mongoose.Types.ObjectId(providerId)
+            }
+        },
+
+        {
+            $lookup: {
+                from: "slots",
+                localField: "slotId",
+                foreignField: "_id",
+                as: "slot"
+            }
+        },
+
+        {
+            $unwind: "$slot"
+        },
+
+        {
+            $set: {
+                appointmentDateTime: {
+                    $dateFromParts: {
+                        year: { $year: "$slot.date" },
+                        month: { $month: "$slot.date" },
+                        day: { $dayOfMonth: "$slot.date" },
+                        hour: {
+                            $toInt: {
+                                $arrayElemAt: [
+                                    { $split: ["$slot.time", ":"] },
+                                    0
+                                ]
+                            }
+                        },
+                        minute: {
+                            $toInt: {
+                                $arrayElemAt: [
+                                    { $split: ["$slot.time", ":"] },
+                                    1
+                                ]
+                            }
+                        },
+                        timezone: "Asia/Kolkata"
+                    }
+                }
+            }
+        },
+        {
+            $match: {
+                appointmentDateTime: dateFilter
+            }
+        },
+        {
+        $facet: {
+            totalBookings:[
+                {
+                    $count: 'total'
+                }
+            ],
+            data:[
+                {
+                $sort: {
+                    appointmentDateTime: sortOrder
+                }
+                },
+                {
+                $skip: skip
+                },
+                {
+                    $limit: limitNumber
+                }
+            ]
         }
-        return res.status(200).json({message:'Bookings are fetched successfully',bookings:bookings});
+        }
+        
+    ]);
+
+    const totalBookings = result[0].totalBookings[0]?.total || 0;
+
+    const bookings = result[0].data;
+
+    const totalPages = Math.ceil(totalBookings / limitNumber);
+
+    const hasNextPage = pageNumber < totalPages;
+
+    console.log('Provider Bookings',bookings);
+
+        return res.status(200).json({message:'Bookings are fetched successfully',bookings:bookings,pagination: {
+        currentPage:pageNumber,
+        totalPages,
+        totalBookings,
+        hasNextPage
+    }});
+
+        // return res.status(200).json({message:'Bookings are fetched successfully',bookings:bookings});
     }
     catch(error){
         console.log(error);

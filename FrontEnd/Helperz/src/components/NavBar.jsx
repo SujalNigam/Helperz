@@ -35,7 +35,7 @@ function NavBar() {
                 <ul className=' flex items-center justify-center gap-4'>
                     <li className='li-nav'> <NavLink to='/'>Home</NavLink></li>
                     <li className='li-nav'> <NavLink to={`/${savedRole}/dashboard`}>Dashboard</NavLink></li>
-                    <li className='li-nav'> <NavLink to={`/${savedRole}/my-bookings`}>MyBookings</NavLink></li>
+                    <li className='li-nav'> <NavLink to={`/${savedRole}/my-bookings`}>My Bookings</NavLink></li>
                 </ul>
 
                 <ul className=' flex items-center justify-center gap-4'>   

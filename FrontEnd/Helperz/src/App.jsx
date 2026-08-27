@@ -26,6 +26,7 @@ const Profile = lazy(()=>import('./pages/Profile'));
 const GenerateSlots = lazy(()=>import('./pages/provider/GenerateSlots'));
 const ManageSlots = lazy(()=>import('./pages/provider/ManageSlots'));
 const MyBookings = lazy(()=> import('./pages/customer/MyBookings'));
+const ProviderMyBookings = lazy(()=> import('./pages/provider/ProviderMyBookings'));
 
 
 
@@ -83,6 +84,10 @@ function App() {
         
             <Route path='/provider/create-service' element={<ProtectedRoutes allowedRole={'provider'}>
                   <CreateService /> 
+            </ProtectedRoutes>} />
+
+            <Route path='/provider/my-bookings' element={<ProtectedRoutes allowedRole={'provider'}>
+                  <ProviderMyBookings /> 
             </ProtectedRoutes>} />
 
             <Route path='/provider/services/:id/generate-slots' element={<ProtectedRoutes allowedRole={'provider'}>

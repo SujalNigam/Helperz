@@ -17,6 +17,9 @@ function ProviderDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [serviceIdToDelete, setServiceIdToDelete] = useState(null);
   const user = useAuthStore((state) => state.user);
+  const page = 1;
+  const limit = 5;
+  const [type, setType] = useState('upcoming');
   const navigate = useNavigate();
 
 
@@ -29,7 +32,7 @@ function ProviderDashboard() {
     onSuccess: (data, variables) => {
       console.log(variables.status);
       queryClient.invalidateQueries({
-        queryKey: ['providerBookings']
+        queryKey: ['providerBookings',page,type]
       });
       if(variables.status === 'accepted'){
         toast.success(`Booking ${variables.status}`);
@@ -86,8 +89,8 @@ function ProviderDashboard() {
     isError: bookingsError,
     error: bookingsErr,
   } = useQuery({
-    queryKey: ["providerBookings"],
-    queryFn: getProviderBookings,
+    queryKey: ["providerBookings",page,type],
+    queryFn: ()=> getProviderBookings(page,limit,type),
   });
 
   if (servicesLoading) {
@@ -120,6 +123,15 @@ function ProviderDashboard() {
             return <Card key={service._id} service={service} showDelete={true} onDelete={handleDelete} showEdit={true}/>;
           })}
         </div>
+        {/* ==================== */}
+      <div className="flex justify-center items-center p-3">
+        <button
+          onClick={() => navigate("/provider/create-service")}
+          className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+        >
+          Create Service →
+        </button>
+      </div>
       </div>
 
       {/* ------------ */}
@@ -140,18 +152,18 @@ function ProviderDashboard() {
               );
             })}
           </div>
+          <div className="flex justify-center mt-4">
+                <button
+                    className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                    onClick={() => navigate('/provider/my-bookings')}
+                >
+                    View All Bookings →
+                </button>
+            </div>
         </div>
       }
 
-      {/* ==================== */}
-      <div className="flex justify-center items-center p-3">
-        <button
-          onClick={() => navigate("/provider/create-service")}
-          className=" p-2 text-xl text-white bg-green-600 rounded-sm"
-        >
-          Create Service
-        </button>
-      </div>
+      
       <ConfirmModal
     isOpen={showModal}
     title="Delete Service"
