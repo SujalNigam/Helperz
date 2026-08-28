@@ -17,8 +17,9 @@ function ProviderDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [serviceIdToDelete, setServiceIdToDelete] = useState(null);
   const user = useAuthStore((state) => state.user);
-  const page = 1;
-  const limit = 5;
+  const [servicePage, setServicePage]= useState(1);
+  const bookingPage = 1;
+  const limit = 4;
   const [type, setType] = useState('upcoming');
   const navigate = useNavigate();
 
@@ -32,7 +33,7 @@ function ProviderDashboard() {
     onSuccess: (data, variables) => {
       console.log(variables.status);
       queryClient.invalidateQueries({
-        queryKey: ['providerBookings',page,type]
+        queryKey: ['providerBookings',bookingPage,type]
       });
       if(variables.status === 'accepted'){
         toast.success(`Booking ${variables.status}`);
@@ -79,8 +80,8 @@ function ProviderDashboard() {
     isError: servicesError,
     error: servicesErr,
   } = useQuery({
-    queryKey: ["providerServices"],
-    queryFn: getProviderServices,
+    queryKey: ["providerServices",servicePage],
+    queryFn: () => getProviderServices(servicePage,limit),
   });
 
   const {
@@ -89,8 +90,8 @@ function ProviderDashboard() {
     isError: bookingsError,
     error: bookingsErr,
   } = useQuery({
-    queryKey: ["providerBookings",page,type],
-    queryFn: ()=> getProviderBookings(page,limit,type),
+    queryKey: ["providerBookings",bookingPage,type],
+    queryFn: ()=> getProviderBookings(bookingPage,limit,type),
   });
 
   if (servicesLoading) {
@@ -116,7 +117,7 @@ function ProviderDashboard() {
       {/* =------------------- */}
       <div>
         <h2 className="flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 ">
-          Popular Services
+          My Services
         </h2>
         <div className="flex gap-4 flex-wrap justify-center">
           {servicesData.services.map((service) => {
@@ -124,6 +125,28 @@ function ProviderDashboard() {
           })}
         </div>
         {/* ==================== */}
+        <div className="flex justify-center items-center gap-4 mt-8">
+                <button
+                    disabled={servicePage === 1}
+                    onClick={() => setServicePage(servicePage - 1)}
+                    className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Previous
+                </button>
+
+                <span className="text-gray-700 font-medium">
+                    Page {servicePage} of {servicesData?.pagination?.totalPages || 0}
+                </span>
+
+                <button
+                    disabled={!servicesData?.pagination?.hasNextPage}
+                    onClick={() => setServicePage(servicePage + 1)}
+                    className="px-4 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Next
+                </button>
+            </div>
+        {/* ---------------------- */}
       <div className="flex justify-center items-center p-3">
         <button
           onClick={() => navigate("/provider/create-service")}

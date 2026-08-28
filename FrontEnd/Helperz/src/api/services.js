@@ -15,8 +15,8 @@ export const getServiceById = async (id) => {
   return response.data;
 };
 
-export const getProviderServices = async () => {
-  const response = await axiosInstance.get('/services/getProviderServices');
+export const getProviderServices = async (page,limit) => {
+  const response = await axiosInstance.get(`/services/getProviderServices?limit=${limit}&page=${page}`);
   return response.data;
 };
 

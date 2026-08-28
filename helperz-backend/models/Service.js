@@ -17,7 +17,18 @@ const serviceSchema = new mongoose.Schema({
 
   price: { type: Number, required: true},
   description: {type: String, required: true},
-  providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+  providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  slotConfig: {
+    workingDays: [{
+        type: String
+    }],
+    times: [{
+        type: String
+    }]
+  },
+  
+},{
+  timestamps:true
 })
 
 module.exports = mongoose.model('Service', serviceSchema);

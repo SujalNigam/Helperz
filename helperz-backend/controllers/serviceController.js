@@ -243,15 +243,62 @@ const getServiceByID = async (req,res)=>{
 const getProviderServices = async (req, res) => {
     try {
         const providerId = req.user.id;
-        const services = await Service.find({ providerId });
-
-        if (services.length === 0) {
-                return res.status(200).json({
-                services: []
-            });
+        const {limit = 4, page = 1} = req.query;
+        const limitNumber = Number(limit);
+        const pageNumber = Number(page);
+        const skip = (pageNumber - 1) * limitNumber;
+        // const services = await Service.find({ providerId });
+        // services
+        const result = await Service.aggregate([
+            {
+                $match: {
+                    providerId: new mongoose.Types.ObjectId(providerId)
+                }
+            },
+            {
+                $facet: {
+                    totalServices: [
+                        {
+                            $count: 'total'
+                        }
+                    ],
+                    data: [
+                        {
+                            $sort: {
+                                createdAt: -1
+                            }
+                        },
+                        {
+                            $skip: skip
+                        },
+                        {
+                            $limit: limitNumber
+                        }
+                    ]
+                }
             }
+        ]);
+
+        const totalServices = result[0].totalServices[0]?.total || 0;
+
+    const services = result[0].data;
+
+    const totalPages = Math.ceil(totalServices / limitNumber);
+
+    const hasNextPage = pageNumber < totalPages;
+
+    console.log('Provider Services',services);
+
         
-        return res.status(200).json({ services, message: 'Provider services fetched successfully' });
+        
+        return res.status(200).json({ services, message: 'Provider services fetched successfully',
+            pagination: {
+        currentPage:pageNumber,
+        totalPages,
+        totalServices,
+        hasNextPage
+    }
+         });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: error.message });
