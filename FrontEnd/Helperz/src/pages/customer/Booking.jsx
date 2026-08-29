@@ -3,14 +3,12 @@ import { useState } from "react";
 
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-// import { services } from '../../utils/dummyData';
-// import { useState } from 'react';
 import { useQuery,useMutation } from '@tanstack/react-query';
 import { createBooking } from '../../api/bookings';
 import { getServiceById } from '../../api/services';
-// import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getAvailableSlots } from '../../api/slots';
+
 
 function Booking() {
 const [selectedSlot, setSelectedSlot] = useState(null);
@@ -55,12 +53,6 @@ const bookingMutation = useMutation({
 
 
 const submitHandler = (data) => {
-    // console.log(data);
-    // data = {...data, serviceId:id, }
-    // data = {...data, providerId: service.providerId, price: service.price};
-    // bookingMutation.mutate(data);
-    // const booking = await createBooking(data);
-    // setIsBooked(true);
      if (!selectedSlot) {
         toast.error("Please select a slot.");
         return;
@@ -116,8 +108,6 @@ if (serviceIsError || slotsIsError) {
 
             <input className='text-black border-b-2 border-gray-400 rounded-sm' placeholder='Las Vegas, US.' type='text' {...register("address", {required:'Address is required'})}/>
             {errors.address && <p>{errors.address.message}</p>}
-            {/* <input className='text-black border-b-2 border-gray-400 rounded-sm' type='datetime-local' {...register("time", {required:'Date and Time is required'})}/>
-            {errors.time && <p>{errors.time.message}</p>} */}
             
             {slots.length === 0 ? (
     <p className="text-gray-500">

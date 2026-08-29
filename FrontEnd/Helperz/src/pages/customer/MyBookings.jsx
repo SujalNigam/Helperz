@@ -4,7 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCustomerBookings, cancelBooking } from '../../api/bookings';
 import toast from 'react-hot-toast';
 
-const MyBookings = () => {
+
+const MyBookings = () => {  
     const [type, setType] = useState('upcoming');
     const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
@@ -13,10 +14,10 @@ const MyBookings = () => {
     isLoading,
     isError,
     error
-} = useQuery({
+    } = useQuery({
     queryKey: ['my-bookings', type, page],
     queryFn: () => getCustomerBookings(page, 3, type)
-});
+    });
 
 
  const cancelMutation = useMutation({
@@ -120,6 +121,7 @@ const MyBookings = () => {
             
             </div>
             )}
+          
         </div>
     );
 };

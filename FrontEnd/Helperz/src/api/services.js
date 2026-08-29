@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosInstance";
 
-export const getServices = async ()=>{
-    const response = await axiosInstance.get('/services/getServices');
+export const getServices = async (page,limit)=>{
+    const response = await axiosInstance.get(`/services/getServices?page=${page}&limit=${limit}`);
     return response.data;
 }
 

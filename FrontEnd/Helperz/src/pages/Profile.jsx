@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
+
 function Profile() {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -65,6 +66,7 @@ function Profile() {
   if (isError) return <p>Error: {error.message}</p>;
 
   return (
+    <>
     <div className="min-h-screen bg-gray-100 py-10">
       <h1 className="text-3xl font-bold text-center text-blue-800 mb-8">
         My Profile
@@ -177,6 +179,8 @@ function Profile() {
         )}
       </form>
     </div>
+    
+    </>
   );
 }
 

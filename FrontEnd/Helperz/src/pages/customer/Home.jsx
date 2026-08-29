@@ -1,18 +1,18 @@
 import React from 'react'
-// import { services } from '../../utils/dummyData'
 import Card from '../../components/Card'
 import {howitworks} from '../../utils/dummyHowItWorks';
 import { useQuery } from '@tanstack/react-query';
 import { getServices } from '../../api/services';
 import SkeletonCard from '../../components/SkeletonCard';
 import heroImage from '../../assets/hero.png'; // adjust path
-// import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 function Home() {
-    // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const servicePage = 1;
+  const limit = 4;
     const {data, isLoading, isError, error} = useQuery({
-        queryKey:['services'],
-        queryFn: getServices
+        queryKey:['services',servicePage],
+        queryFn: () => getServices(servicePage,limit)
     })
     if(isError){
         return <p>Error: {error.message}</p>
@@ -20,17 +20,7 @@ function Home() {
     console.log(data);
     const services = data?.services;
   return (
-    // <div className="text-3xl text-blue-500">Home</div>
     <>
-    {/* --------------------------------------------Hero section------------------ */}
-        {/* <div className='w-full p-10 pb-5 flex flex-col gap-3 items-center justify-center bg-blue-500 '>
-            <h1 className='text-gray-800 text-6xl'>Welcome to Helperz</h1>
-            <p className='text-gray-300 text-3xl'>A place to Ask Help</p>
-            <div className='flex gap-3 p-3 pb-0'>
-                <button className='text-white  btn-home'>Find Services</button>
-                <button className='text-white btn-home'>Become a provider</button>
-            </div>
-        </div> */}
         <section className="bg-gradient-to-r from-blue-700 to-blue-100 text-white">
   <div className="max-w-7xl mx-auto px-8 py-8 flex flex-col-reverse lg:flex-row items-center justify-between gap-12">
 
@@ -86,7 +76,6 @@ function Home() {
       <img
         src={heroImage}
         alt="Helperz Hero"
-        // className="h-80 w-auto max-w-lg drop-shadow-2xl"
         className="w-full h-full object-cover object-top max-w-lg drop-shadow-2xl"
       />
     </div>
@@ -106,6 +95,14 @@ function Home() {
             }</div>)
             }
         </div>
+        <div className="flex justify-center mt-4">
+                <button
+                    className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                    onClick={() => navigate('/customer/dashboard#services')}
+                >
+                    View All Services →
+                </button>
+            </div>
 
         {/* -------------------How it works-------------------- */}
         <div className='flex justify-center items-center gap-12 my-5'>
@@ -113,7 +110,6 @@ function Home() {
                 return <span key={step.id}>{step.content}</span>
             })}
         </div>
-        
     </>
   )
 }

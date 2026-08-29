@@ -200,16 +200,60 @@ const deleteService = async(req,res) => {
 
 const getServices = async(req,res)=> {
     try{
+        const {limit = 4, page = 1} = req.query;
+        const limitNumber = Number(limit);
+        const pageNumber = Number(page);
+        const skip = (pageNumber - 1) * limitNumber;
         //get services from DB
-        const services = await Service.find();
+        // const services = await Service.find();
+        const result = await Service.aggregate([
+            {
+                $facet: {
+                    totalServices: [
+                        {
+                            $count: 'total'
+                        }
+                    ],
+                    data: [
+                    {
+                    $sort: {
+                        createdAt: -1
+                    },
+                        },
+                        {
+                                $skip: skip
+                        },
+                        {
+                                $limit: limitNumber
+                        }
+                                ]
+                            }
+                        }
+            
+        ]);
 
-        if (services.length === 0) {
-                return res.status(200).json({
-                    services: []
-                }); 
-                }
+         const totalServices = result[0].totalServices[0]?.total || 0;
 
-        return res.status(200).json({services:services, message:'Services fetched successfully'});
+    const services = result[0].data;
+
+    const totalPages = Math.ceil(totalServices / limitNumber);
+
+    const hasNextPage = pageNumber < totalPages;
+
+    console.log('All Services',services);
+
+
+        
+
+
+        return res.status(200).json({services:services, message:'Services fetched successfully',
+            pagination: {
+                currentPage:pageNumber,
+                totalPages,
+                totalServices,
+                hasNextPage
+            }
+        });
     }
     catch(error){
         return res.status(500).json({message:error.message});

@@ -113,8 +113,6 @@ function ProviderDashboard() {
 
   return (
     <>
-      <h1>Hi {user.name}! Welcome to ProviderDashboard</h1>
-      {/* =------------------- */}
       <div>
         <h2 className="flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 ">
           My Services
@@ -195,6 +193,7 @@ function ProviderDashboard() {
     onConfirm={() => deleteMutation.mutate(serviceIdToDelete)}
     isLoading={deleteMutation.isPending}
   />
+
     </>
   );
 }

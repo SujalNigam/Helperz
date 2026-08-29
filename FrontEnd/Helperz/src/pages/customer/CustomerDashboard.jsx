@@ -3,7 +3,6 @@ import { useState } from 'react';
 import useAuthStore from '../../store/authStore'
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/Card';
-// import { services } from '../../utils/dummyData';
 import {useQuery} from '@tanstack/react-query';
 import { getServices } from '../../api/services';
 import { getCustomerBookings } from '../../api/bookings';
@@ -14,17 +13,13 @@ import toast from 'react-hot-toast';
 
 
 function CustomerDashboard() {
+    const navigate = useNavigate();
     const [search, setSearch] = useState("");
     const queryClient = useQueryClient();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const savedUser = useAuthStore((state)=>state.user);
-
-    // const logoutHandler = () => {
-    //     useAuthStore.getState().logout();
-    //     // localStorage.clear();
-    //     navigate('/login');
-    // }
-
+    const [servicePage, setServicePage]= useState(1);
+    const limit = 4;
     
     const cancelMutation = useMutation({
         mutationFn:cancelBooking,
@@ -33,7 +28,6 @@ function CustomerDashboard() {
             toast.success('Booking Cancelled Successfully');
         },
         onError:(error)=>{
-            // console.log(error.message);
             toast.error(error.response?.data?.message||'Booking cancellation failed!');
         }
     })
@@ -45,8 +39,8 @@ function CustomerDashboard() {
         
 
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ['services'],       // unique cache key
-        queryFn: getServices,         // the function that fetches data
+        queryKey: ['services',servicePage,limit],       // unique cache key
+        queryFn:() => getServices(servicePage,limit),         // the function that fetches data
     });
     const { data:dataB, isLoading:isLoadingB, isError:isErrorB, error:errorB } = useQuery({
         queryKey: ['bookings',1],       // unique cache key
@@ -57,9 +51,6 @@ function CustomerDashboard() {
 
   return (
     <>
-
-    <h1 className='text-blue-600 text-2xl'>Hi {savedUser.name}! CustomerDashboard</h1>
-
         {/* customer's booked bookings  */}
         <div className='mb-2'>
             <h2 className='flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 '>My Bookings</h2>
@@ -81,20 +72,8 @@ function CustomerDashboard() {
             </div>
         </div>
 
-
-
-
-        {/* -------------------------Services Search------------------ */}
-        {/* <div>
-            <input
-            type="text"
-            placeholder="Search services..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            />
-        </div> */}
      {/* ----------------------Services showing-------------------- */}
-        <div>
+        <div id='services'>
             <h2 className='flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 '>Popular Services</h2>
         <div className='flex gap-4 flex-wrap justify-center'>
         {   isLoading ? (<p>Loading...</p>)
@@ -106,6 +85,27 @@ function CustomerDashboard() {
             </div>
         </div>
 
+        <div className="flex justify-center items-center gap-4 mt-8">
+                <button
+                    disabled={servicePage === 1}
+                    onClick={() => setServicePage(servicePage - 1)}
+                    className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Previous
+                </button>
+
+                <span className="text-gray-700 font-medium">
+                    Page {servicePage} of {data?.pagination?.totalPages || 0}
+                </span>
+
+                <button
+                    disabled={!data?.pagination?.hasNextPage}
+                    onClick={() => setServicePage(servicePage + 1)}
+                    className="px-4 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Next
+                </button>
+            </div>
 
     </>
   )

@@ -27,6 +27,7 @@ const GenerateSlots = lazy(()=>import('./pages/provider/GenerateSlots'));
 const ManageSlots = lazy(()=>import('./pages/provider/ManageSlots'));
 const MyBookings = lazy(()=> import('./pages/customer/MyBookings'));
 const ProviderMyBookings = lazy(()=> import('./pages/provider/ProviderMyBookings'));
+const Footer = lazy(()=> import('./components/Footer'));
 
 
 
@@ -104,6 +105,7 @@ function App() {
             
        
       </Routes>
+      <Footer/>
     </Suspense>
   );
 }
