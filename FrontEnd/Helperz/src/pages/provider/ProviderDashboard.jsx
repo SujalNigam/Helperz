@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import useAuthStore from "../../store/authStore";
-// import { services } from '../../utils/dummyData';
 import Card from "../../components/Card";
 import BookingCard from "../../components/BookingCard";
-// import { bookings } from '../../utils/dummyBookings';
 import { useNavigate } from "react-router-dom";
 import { deleteService, getProviderServices } from "../../api/services";
 import { getProviderBookings } from "../../api/bookings";
@@ -11,6 +9,8 @@ import { useQuery,useQueryClient,useMutation } from "@tanstack/react-query";
 import { updateBookingStatus } from "../../api/bookings";
 import ConfirmModal from "../../components/ConfirmModal";
 import toast from 'react-hot-toast';
+import SkeletonServiceProviderCard from "../../components/SkeletonServiceProviderCard";
+import SkeletonProviderBookingCard from "../../components/SkeletonProviderBookingCard";
 
 
 function ProviderDashboard() {
@@ -94,17 +94,17 @@ function ProviderDashboard() {
     queryFn: ()=> getProviderBookings(bookingPage,limit,type),
   });
 
-  if (servicesLoading) {
-    return <p>Loading...</p>;
-  }
+  // if (servicesLoading) {
+  //   return <p>Loading...</p>;
+  // }
   if (servicesError) {
     return <p>Error: {servicesErr.message}</p>;
   }
 
 
-  if (bookingsLoading) {
-    return <p>Loading...</p>;
-  }
+  // if (bookingsLoading) {
+  //   return <p>Loading...</p>;
+  // }
   if (bookingsError) {
     return <p>Error: {bookingsErr.message}</p>;
   }
@@ -117,13 +117,25 @@ function ProviderDashboard() {
         <h2 className="flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 ">
           My Services
         </h2>
-        <div className="flex gap-4 flex-wrap justify-center">
+
+          { servicesLoading ? (<div className='flex gap-4 flex-wrap justify-center'>
+                            {[1,2,3,4].map(i => <SkeletonServiceProviderCard key={i} />)}
+                            </div>):
+                            servicesData.services.length === 0 ? (
+                              <div className="flex flex-col justify-center items-center p-3">
+                              <p className="text-gray-700 font-medium">No Services yet</p>
+                              <p className="text-gray-500 text-sm mt-1">
+                                Create your First Service.
+                              </p>
+                            </div>
+                            ):
+        (<div> 
+          <div className="flex gap-4 flex-wrap justify-center">
           {servicesData.services.map((service) => {
             return <Card key={service._id} service={service} showDelete={true} onDelete={handleDelete} showEdit={true}/>;
           })}
         </div>
-        {/* ==================== */}
-        <div className="flex justify-center items-center gap-4 mt-8">
+          <div className="flex justify-center items-center gap-4 mt-8">
                 <button
                     disabled={servicePage === 1}
                     onClick={() => setServicePage(servicePage - 1)}
@@ -144,6 +156,9 @@ function ProviderDashboard() {
                     Next
                 </button>
             </div>
+        </div>)}
+        {/* ==================== */}
+        
         {/* ---------------------- */}
       <div className="flex justify-center items-center p-3">
         <button
@@ -161,26 +176,48 @@ function ProviderDashboard() {
           <h2 className="flex justify-center items-center text-2xl p-2 mb-2 mt-2 text-gray-100 bg-blue-800 ">
             My Bookings
           </h2>
-          <div className="flex gap-4 flex-wrap justify-center">
-            {bookingsData.bookings.map((booking) => {
-              return (
-                <BookingCard
-                  handleStatusUpdate={handleStatusUpdate}
-                  key={booking._id}
-                  booking={booking}
-                  showActions={true}
-                />
-              );
-            })}
-          </div>
-          <div className="flex justify-center mt-4">
-                <button
-                    className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
-                    onClick={() => navigate('/provider/my-bookings')}
-                >
-                    View All Bookings →
-                </button>
+
+          { bookingsLoading ? (<div className='flex gap-4 flex-wrap justify-center'>
+                            {[1,2,3].map(i => <SkeletonProviderBookingCard key={i} />)}
+                            </div>):
+                            bookingsData.bookings.length === 0 ? (<div className="flex flex-col justify-center items-center p-3">
+                              <p className="text-gray-700 font-medium">No Upcoming Bookings yet</p>
+                              {/* <p className="text-gray-500 text-sm mt-1">
+                                Create a service to start receiving bookings.
+                              </p> */}
+
+                              <button
+                                onClick={() => navigate("/provider/my-bookings",{
+                                  state: {type: 'past'}
+                                })
+                                }
+                                className="mt-5 px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100"
+                              >
+                                View Past Bookings →
+                              </button>
+                            </div>):
+            (<div>
+              <div className="flex gap-4 flex-wrap justify-center">
+                {bookingsData.bookings.map((booking) => {
+                  return (
+                    <BookingCard
+                      handleStatusUpdate={handleStatusUpdate}
+                      key={booking._id}
+                      booking={booking}
+                      showActions={true}
+                    />
+                  );
+                })}
             </div>
+              <div className="flex justify-center mt-4">
+                  <button
+                      className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                      onClick={() => navigate('/provider/my-bookings')}
+                  >
+                      View All Bookings →
+                  </button>
+              </div>
+          </div>)}
         </div>
       }
 

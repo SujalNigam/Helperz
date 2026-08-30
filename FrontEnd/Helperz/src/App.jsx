@@ -8,6 +8,7 @@ import useAuthStore from './store/authStore';
 // import CreateService from './pages/provider/CreateService';
 // import ServiceDetail from './pages/ServiceDetail';
 import {BarLoader} from 'react-spinners';
+import Footer from './components/Footer';
 const Home = lazy(() => import('./pages/customer/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -27,7 +28,8 @@ const GenerateSlots = lazy(()=>import('./pages/provider/GenerateSlots'));
 const ManageSlots = lazy(()=>import('./pages/provider/ManageSlots'));
 const MyBookings = lazy(()=> import('./pages/customer/MyBookings'));
 const ProviderMyBookings = lazy(()=> import('./pages/provider/ProviderMyBookings'));
-const Footer = lazy(()=> import('./components/Footer'));
+// const Footer = lazy(()=> import('./components/Footer'));
+
 
 
 
@@ -42,7 +44,9 @@ function App() {
 }, []);
   return (
     <Suspense fallback={<div><BarLoader/></div>}>
+    <div className='min-h-screen flex flex-col'>
     <NavBar/>
+    <main className='flex-1'>
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/profile' element  = {<Profile/>} />
@@ -105,7 +109,9 @@ function App() {
             
        
       </Routes>
+      </main>
       <Footer/>
+      </div>
     </Suspense>
   );
 }

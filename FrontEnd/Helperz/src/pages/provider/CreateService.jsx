@@ -33,7 +33,7 @@ const mutation = useMutation({
 
     const serviceId = data.service._id;
 
-    navigate(`/provider/services/${service._id}/generate-slots`, {
+    navigate(`/provider/services/${serviceId}/generate-slots`, {
     state: { from: "create" }
 });
   },
@@ -110,7 +110,8 @@ onChange={(e) => {
             {errors.price && <p>{errors.price.message}</p>}
             <input className='text-black border-b-2 border-gray-400 rounded-sm' placeholder='It is a service description' type='text' {...register("description", {required:'Description is required'})}/>
             {errors.description && <p>{errors.description.message}</p>}
-            <button className='bg-gray-700 text-white p-2 m-4 rounded-md '  type='submit' >Create Service</button>
+            <button className='bg-gray-700 text-white p-2 m-4 rounded-md '  type='submit' > {mutation.isPending ? "Creating..." : "Create Service"}</button>
+            
      </form>
      {/* {isCreated && mutation.isSuccess && <p className='text-green-600 text-xl'>Service Created Successfully! 🎉</p>} */}
      {mutation.isSuccess && <p className='text-green-600 text-xl'>Service Created Successfully! 🎉</p>}

@@ -3,7 +3,7 @@ import Card from '../../components/Card'
 import {howitworks} from '../../utils/dummyHowItWorks';
 import { useQuery } from '@tanstack/react-query';
 import { getServices } from '../../api/services';
-import SkeletonCard from '../../components/SkeletonCard';
+import SkeletonServiceCard from '../../components/SkeletonServiceCard';
 import heroImage from '../../assets/hero.png'; // adjust path
 import { useNavigate } from 'react-router-dom';
 function Home() {
@@ -88,7 +88,7 @@ function Home() {
             <h2 className='flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 '>Popular Services</h2>
         
         { isLoading ? (<div className='flex gap-4 flex-wrap justify-center'>
-                    {[1,2,3,4].map(i => <SkeletonCard key={i} />)}
+                    {[1,2,3,4].map(i => <SkeletonServiceCard key={i} />)}
                     </div>)
         : ( <div className='flex gap-4 flex-wrap justify-center'>
             {services.map((service) => <Card key={service._id} service={service}/>)

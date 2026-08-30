@@ -3,9 +3,14 @@ import BookingCard from '../../components/BookingCard';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProviderBookings,updateBookingStatus } from '../../api/bookings';
 import toast from 'react-hot-toast';
+import { useLocation } from 'react-router-dom';
+import SkeletonProviderBookingCard from '../../components/SkeletonProviderBookingCard';
 
 const ProviderMyBookings = () => {
-    const [type, setType] = useState('upcoming');
+    const location = useLocation();
+    const [type, setType] = useState(
+        location.state?.type || 'upcoming'
+    );
     const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
 
@@ -40,29 +45,8 @@ const updateMutation = useMutation({
     updateMutation.mutate({ id, status });
   };
 
-
-//  const cancelMutation = useMutation({
-//         mutationFn:cancelBooking,
-//         onSuccess:()=>{
-//             queryClient.invalidateQueries(['my-bookings', type,page]);
-//             toast.success('Booking Cancelled Successfully');
-//         },
-//         onError:(error)=>{
-//             // console.log(error.message);
-//             toast.error(error.response?.data?.message||'Booking cancellation failed!');
-//         }
-//     })
-
-    // const handleCancel = (id) => {
-    //         // const b = await cancelBooking(id);
-    //         cancelMutation.mutate(id);
-    //         // console.log("request is cancelled", id);
-    //     }
-
-    console.log(data);
-
     return (
-        <div >
+        <div>
                 <h2 className='flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 '>My Bookings</h2>
                 
                 <div className="flex justify-center gap-2 mb-6">
@@ -93,14 +77,32 @@ const updateMutation = useMutation({
         >
             Past
         </button>
-    </div>
+                </div>
 
-            {isLoading && <p>Loading...</p>}
+            {/* {isLoading && <p>Loading...</p>} */}
 
             {isError && <p>Error: {error.message}</p>}
 
-            {data && (
-                <div>
+            {isLoading ? (
+                <div className='flex gap-4 flex-wrap justify-center'>
+                            {[1,2,3].map(i => <SkeletonProviderBookingCard key={i} />)}
+                            </div>
+            ):
+            data.bookings.length === 0 ? (<div className="flex flex-col justify-center items-center p-3">
+                              <p className="text-gray-700 font-medium">No Bookings yet</p>
+                              <p className="text-gray-500 text-sm mt-1">
+                                Create a service to start receiving bookings.
+                              </p>
+
+                              <button
+                                onClick={() => navigate("/provider/create-service")}
+                                className="mt-5 px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100"
+                              >
+                                Create Service →
+                              </button>
+                            </div>):
+            (
+            <div>
                 <div className='mb-2'>
                             
                         <div className='flex gap-4 flex-wrap justify-center'>
@@ -110,13 +112,7 @@ const updateMutation = useMutation({
                         }
                             </div>
                         </div>
-                {/* ------------------
-
-                <div>
-                    {data.bookings.map((booking) => (
-                        <BookingCard key = {booking._id} booking={booking}/>
-                    ))}
-                </div> */}
+                        {/* ---------------- */}
             <div className="flex justify-center items-center gap-4 mt-8">
                 <button
                     disabled={page === 1}
@@ -140,10 +136,10 @@ const updateMutation = useMutation({
             </div>
             
             
-            </div>
+        </div>
             )}
            
-        </div>
+    </div>
     );
 };
 
