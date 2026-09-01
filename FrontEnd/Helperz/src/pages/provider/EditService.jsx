@@ -57,9 +57,13 @@ function EditService() {
         toast.success('Service Edited Successfully');
         navigate('/provider/dashboard');
     },
-    onError: () => {
-        toast.error(errorS.response?.data?.message || errorS.message);
-    }
+    onError: (error) => {
+    console.log("Backend message:", error.response?.data?.message);
+
+    toast.error(
+        error.response?.data?.message || error.message
+    );
+}
     
     })
     
@@ -67,6 +71,7 @@ function EditService() {
         return <p>Loading...</p>
     }
     if(isErrorS){
+        console.log(errorS.message);
         return <p>Error {errorS.message}</p>
     }
 
@@ -77,7 +82,9 @@ function EditService() {
     const submitHandler = (formData) => {
          const formUpdatedData = new FormData();
         formUpdatedData.append('title',formData.title);
-        formUpdatedData.append('image',formData.image[0]);
+        if(formData?.image?.[0]){
+            formUpdatedData.append('image',formData.image[0]);
+        }
         formUpdatedData.append('price',formData.price);
         formUpdatedData.append('description',formData.description);
         // console.log(formData);

@@ -3,10 +3,14 @@ import BookingCard from '../../components/BookingCard';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCustomerBookings, cancelBooking } from '../../api/bookings';
 import toast from 'react-hot-toast';
+import { useLocation } from 'react-router-dom';
+import SkeletonProviderBookingCard
+ from '../../components/SkeletonProviderBookingCard';
 
 
 const MyBookings = () => {  
-    const [type, setType] = useState('upcoming');
+    const location = useLocation();
+    const [type, setType] = useState(location?.state?.type || 'upcoming');
     const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
     const {
@@ -74,11 +78,31 @@ const MyBookings = () => {
         </button>
     </div>
 
-            {isLoading && <p>Loading...</p>}
+            {/* {isLoading && <p>Loading...</p>} */}
 
-            {isError && <p>Error: {error.message}</p>}
+            {/* {isError && <p>Error: {error.message}</p>} */}
 
-            {data && (
+            {isLoading ? (
+                <div className='flex gap-4 flex-wrap justify-center'>
+                            {[1,2,3].map(i => <SkeletonProviderBookingCard key={i} />)}
+                            </div>
+            ):
+             isError ? (<p>Error: {error.message}</p>):
+            data.bookings.length === 0 ? (
+            <div className="flex flex-col justify-center items-center p-3">
+                              <p className="text-gray-700 font-medium">
+                                No {type === 'upcoming' ? 'Upcoming' : 'Past'} Bookings yet
+                            </p>
+
+                              <button
+                                onClick={() => setType('past')
+                                }
+                                className="mt-5 px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100"
+                              >
+                                View Past Bookings →
+                              </button>
+                            </div>
+        ):(
                 <div>
                 <div className='mb-2'>
                             
@@ -89,13 +113,7 @@ const MyBookings = () => {
                         }
                             </div>
                         </div>
-                {/* ------------------
 
-                <div>
-                    {data.bookings.map((booking) => (
-                        <BookingCard key = {booking._id} booking={booking}/>
-                    ))}
-                </div> */}
             <div className="flex justify-center items-center gap-4 mt-8">
                 <button
                     disabled={page === 1}

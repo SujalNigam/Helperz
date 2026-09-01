@@ -155,7 +155,7 @@ const deleteService = async(req,res) => {
         const loggedInProviderId = req.user.id;
         const serviceId = req.params.id;
         if(role!=='provider'){
-            return res.status(403).json({message:'Only provider can edit service!'});
+            return res.status(403).json({message:'Only provider can delete service!'});
         }
         if(!serviceId){
             return res.status(400).json({message:'Service id could not reach Backend'});

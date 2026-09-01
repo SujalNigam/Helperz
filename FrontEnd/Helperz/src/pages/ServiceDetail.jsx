@@ -12,13 +12,15 @@ function ServiceDetail() {
     const navigate = useNavigate();
     const user = useAuthStore((state)=>state.user);
 
-    console.log("Hi");
+    // console.log("Hi");
     const { id } = useParams();
 
     const {data, isLoading, isError, error} = useQuery({
         queryKey:['service',id],
         queryFn:() => getServiceById(id)
     });
+
+    const isOwner = data?.service?.providerId === user?._id;
 
     const handleBookNow = () => { 
                 if(!user){
@@ -28,6 +30,8 @@ function ServiceDetail() {
                     navigate(`/booking/${id}`);
                 }
             }
+
+
 
     // const service =  services.find((s)=>s.id==id)
     // console.log(service);
@@ -65,7 +69,7 @@ function ServiceDetail() {
             {data.service.price}
           </p>
 
-          {role === "provider" ? (
+          {role === "provider" && isOwner ? (
             <>
               <button
                 onClick={(e) => {
@@ -99,14 +103,16 @@ function ServiceDetail() {
                 Edit Service
               </button>
             </>
-          ) : (
+          ) :
+          role === 'customer'?
+          (
             <button
               onClick={handleBookNow}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-800"
             >
               Book Now
             </button>
-          )}
+          ):(null)}
         </div>
       </div>
     )}

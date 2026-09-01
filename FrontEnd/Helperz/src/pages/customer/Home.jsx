@@ -89,13 +89,18 @@ function Home() {
         
         { isLoading ? (<div className='flex gap-4 flex-wrap justify-center'>
                     {[1,2,3,4].map(i => <SkeletonServiceCard key={i} />)}
-                    </div>)
-        : ( <div className='flex gap-4 flex-wrap justify-center'>
+                    </div>):
+                    data.services.length === 0 ? (<div className="flex flex-col justify-center items-center p-3">
+                              <p className="text-gray-700 font-medium">No Services yet</p>
+                              <p className="text-gray-500 text-sm mt-1">
+                                Our Providers will soon provide useful services.
+                              </p>
+                            </div>):
+                     ( <div>
+                     <div className='flex gap-4 flex-wrap justify-center'>
             {services.map((service) => <Card key={service._id} service={service}/>)
-            }</div>)
-            }
-        </div>
-        <div className="flex justify-center mt-4">
+                }</div>
+            <div className="flex justify-center mt-4">
                 <button
                     className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
                     onClick={() => navigate('/customer/dashboard#services')}
@@ -103,6 +108,9 @@ function Home() {
                     View All Services →
                 </button>
             </div>
+            </div>)
+            }
+        </div>
 
         {/* -------------------How it works-------------------- */}
         <div className='flex justify-center items-center gap-12 my-5'>

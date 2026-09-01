@@ -10,14 +10,13 @@ import BookingCard from '../../components/BookingCard';
 import { cancelBooking } from '../../api/bookings';
 import { useQueryClient,useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-
+import SkeletonServiceProviderCard from '../../components/SkeletonServiceProviderCard';
+import SkeletonProviderBookingCard from '../../components/SkeletonProviderBookingCard';
 
 function CustomerDashboard() {
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
     const queryClient = useQueryClient();
-    // const navigate = useNavigate();
-    const savedUser = useAuthStore((state)=>state.user);
     const [servicePage, setServicePage]= useState(1);
     const limit = 4;
     
@@ -42,11 +41,11 @@ function CustomerDashboard() {
         queryKey: ['services',servicePage,limit],       // unique cache key
         queryFn:() => getServices(servicePage,limit),         // the function that fetches data
     });
+
     const { data:dataB, isLoading:isLoadingB, isError:isErrorB, error:errorB } = useQuery({
         queryKey: ['bookings',1],       // unique cache key
         queryFn: () => getCustomerBookings(1,2,'upcoming'),         // the function that fetches data
     });
-    if (!savedUser) return <p>Loading...</p>;
 
 
   return (
@@ -55,13 +54,30 @@ function CustomerDashboard() {
         <div className='mb-2'>
             <h2 className='flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 '>My Bookings</h2>
         <div className='flex gap-4 flex-wrap justify-center'>
-        {   isLoadingB ? (<p>Loading...</p>)
-        : (isErrorB ? (<p>Error: {errorB.message}</p>)
-            :( dataB.bookings.map((booking)=>{
-                return <BookingCard key={booking._id} booking={booking} showActions={false} showCancel={true} onCancel={handleCancel}/>
-            }) ))
-        }
-            </div>
+        {   isLoadingB ? (<div className='flex gap-4 flex-wrap justify-center'>
+                            {[1,2,3].map(i => <SkeletonProviderBookingCard key={i} />)}
+                            </div>):
+                            isErrorB ? (<p>Error: {errorB.message}</p>)
+        : dataB?.bookings.length === 0 ? (
+            <div className="flex flex-col justify-center items-center p-3">
+                              <p className="text-gray-700 font-medium">No Upcoming Bookings yet</p>
+
+                              <button
+                                onClick={() => navigate("/customer/my-bookings",{
+                                  state: {type: 'past'}
+                                })
+                                }
+                                className="mt-5 px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100"
+                              >
+                                View Past Bookings →
+                              </button>
+                            </div>
+        )
+            :(<div>{
+                 dataB.bookings.map((booking) => {
+                return (<BookingCard key={booking._id} booking={booking} showActions={false} showCancel={true} onCancel={handleCancel}/>);
+                 })
+            }
             <div className="flex justify-center mt-4">
                 <button
                     className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
@@ -70,22 +86,34 @@ function CustomerDashboard() {
                     View All Bookings →
                 </button>
             </div>
+            </div>
+            )
+        }
+            </div>
         </div>
 
      {/* ----------------------Services showing-------------------- */}
         <div id='services'>
             <h2 className='flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 '>Popular Services</h2>
         <div className='flex gap-4 flex-wrap justify-center'>
-        {   isLoading ? (<p>Loading...</p>)
-        : (isError ? (<p>Error: {error.message}</p>)
-            :( data.services.map((service)=>{
+        {   isLoading ? (<div className='flex gap-4 flex-wrap justify-center'>
+                            {[1,2,3,4].map(i => <SkeletonServiceProviderCard key={i} />)}
+                            </div>)
+        : isError ? (<p>Error: {error.message}</p>)
+        :data.services.length === 0 ? (<div className="flex flex-col justify-center items-center p-3">
+                              <p className="text-gray-700 font-medium">No Services yet</p>
+                              <p className="text-gray-500 text-sm mt-1">
+                                Our Providers are soon going to provide best services.
+                              </p>
+                            </div>)
+            :(<div className='flex flex-col gap-4 flex-wrap justify-center'>
+                <div className='flex gap-4 flex-wrap justify-center'>
+                    { data?.services.map((service)=>{
                 return <Card key={service._id} service={service}/>
-            }) ))
-        }
-            </div>
-        </div>
-
-        <div className="flex justify-center items-center gap-4 mt-8">
+                        }) }
+                </div>
+                
+                <div className="flex justify-center items-center gap-4 mt-8">
                 <button
                     disabled={servicePage === 1}
                     onClick={() => setServicePage(servicePage - 1)}
@@ -106,6 +134,13 @@ function CustomerDashboard() {
                     Next
                 </button>
             </div>
+            </div>
+            )
+        }
+            </div>
+        </div>
+
+        
 
     </>
   )
