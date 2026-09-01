@@ -11,6 +11,7 @@ function Card({service,showDelete,onDelete,showEdit}) {
     flex flex-col justify-center items-center
     border-2 border-amber-800
     min-w-30
+    max-w-60
     bg-white
     px-3 py-3
     cursor-pointer
@@ -33,7 +34,7 @@ function Card({service,showDelete,onDelete,showEdit}) {
                 No Image
             </div>
         )} 
-        <p>{service.title}</p>   
+        <p className='font-semibold line-clamp-1 wrap-anywhere'>{service.title}</p>   
         <p className="font-semibold text-green-700">
           ₹{service.price}
         </p>  

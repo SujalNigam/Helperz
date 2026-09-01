@@ -43,13 +43,13 @@ function ServiceDetail() {
       <p>Error: {error?.response?.data?.message || error.message}</p>
     ) : (
       <div className="flex justify-center items-center m-20">
-        <div className="w-fit flex flex-col items-center justify-center p-10 gap-4 rounded-md border-2 border-amber-800">
+        <div className="w-full max-w-md flex flex-col items-center justify-center p-10 gap-4 rounded-md border-2 border-amber-800">
 
           {data.service.image.url ? (
             <img
-              src={data.service.image.url}
+              src={data.service.image?.url}
               alt={data.service.title}
-              className="w-full h-40 object-cover rounded-lg"
+              className="w-full max-h-50 object-contain rounded-lg"
             />
           ) : (
             <div className="w-full h-40 bg-gray-300 flex items-center justify-center rounded-lg">
@@ -57,16 +57,16 @@ function ServiceDetail() {
             </div>
           )}
 
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-3xl wrap-anywhere font-bold">
             {data.service.title}
           </h1>
 
-          <p className="text-gray-500">
+          <p className=" wrap-anywhere leading-relaxed text-gray-500">
             {data.service.description}
           </p>
 
           <p className="text-green-600 text-2xl font-bold">
-            {data.service.price}
+             ₹{data.service.price}
           </p>
 
           {role === "provider" && isOwner ? (

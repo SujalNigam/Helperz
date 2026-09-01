@@ -53,6 +53,10 @@ function CustomerDashboard() {
         {/* customer's booked bookings  */}
         <div className='mb-2'>
             <h2 className='flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 '>My Bookings</h2>
+        
+            {/* <h2 className="text-2xl font-bold text-gray-800 text-center mt-5 mb-5">
+  My Bookings
+</h2> */}
         <div className='flex gap-4 flex-wrap justify-center'>
         {   isLoadingB ? (<div className='flex gap-4 flex-wrap justify-center'>
                             {[1,2,3].map(i => <SkeletonProviderBookingCard key={i} />)}
@@ -73,20 +77,28 @@ function CustomerDashboard() {
                               </button>
                             </div>
         )
-            :(<div>{
-                 dataB.bookings.map((booking) => {
-                return (<BookingCard key={booking._id} booking={booking} showActions={false} showCancel={true} onCancel={handleCancel}/>);
-                 })
-            }
-            <div className="flex justify-center mt-4">
-                <button
-                    className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
-                    onClick={() => navigate('/customer/my-bookings')}
-                >
-                    View All Bookings →
-                </button>
-            </div>
-            </div>
+            :(<div className='flex flex-col justify-center'>
+    <div className='flex flex-wrap gap-4 justify-center'>
+        {dataB.bookings.map((booking) => (
+            <BookingCard
+                key={booking._id}
+                booking={booking}
+                showActions={false}
+                showCancel={true}
+                onCancel={handleCancel}
+            />
+        ))}
+    </div>
+
+    <div className="flex justify-center mt-6">
+        <button
+            onClick={() => navigate('/customer/my-bookings')}
+            className="px-5 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+        >
+            View All Bookings →
+        </button>
+    </div>
+</div>
             )
         }
             </div>
