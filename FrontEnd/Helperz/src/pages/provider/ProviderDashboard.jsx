@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import useAuthStore from "../../store/authStore";
 import Card from "../../components/Card";
 import BookingCard from "../../components/BookingCard";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +15,6 @@ import SkeletonProviderBookingCard from "../../components/SkeletonProviderBookin
 function ProviderDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [serviceIdToDelete, setServiceIdToDelete] = useState(null);
-  const user = useAuthStore((state) => state.user);
   const [servicePage, setServicePage]= useState(1);
   const bookingPage = 1;
   const limit = 4;
@@ -58,17 +56,11 @@ function ProviderDashboard() {
     }
   });
 
-  // const updateBookingStatus = (id, status)=>{
-  //     setBookingList(bookingList.map((b)=>{return b.id==id?{...b, status:status}:b}));
-  // }
 
   const handleStatusUpdate = (id, status) => {
     mutation.mutate({ id, status });
   };
 
-  // const handleDelete = (id) => {
-  //   deleteMutation.mutate({id});
-  // }
   const handleDelete = (id) => {
     setServiceIdToDelete(id);
     setShowModal(true);
@@ -94,17 +86,10 @@ function ProviderDashboard() {
     queryFn: ()=> getProviderBookings(bookingPage,limit,type),
   });
 
-  // if (servicesLoading) {
-  //   return <p>Loading...</p>;
-  // }
   if (servicesError) {
     return <p>Error: {servicesErr.message}</p>;
   }
 
-
-  // if (bookingsLoading) {
-  //   return <p>Loading...</p>;
-  // }
   if (bookingsError) {
     return <p>Error: {bookingsErr.message}</p>;
   }
@@ -118,7 +103,7 @@ function ProviderDashboard() {
           My Services
         </h2>
 
-          { servicesLoading ? (<div className='flex gap-4 flex-wrap justify-center'>
+          { servicesLoading ? (<div className='flex gap-2 md:gap-4 flex-wrap justify-center'>
                             {[1,2,3,4].map(i => <SkeletonServiceProviderCard key={i} />)}
                             </div>):
                             servicesData.services.length === 0 ? (
@@ -130,7 +115,7 @@ function ProviderDashboard() {
                             </div>
                             ):
         (<div> 
-          <div className="flex gap-4 flex-wrap justify-center">
+          <div className="flex gap md:gap-4 flex-wrap justify-center">
           {servicesData.services.map((service) => {
             return <Card key={service._id} service={service} showDelete={true} onDelete={handleDelete} showEdit={true}/>;
           })}

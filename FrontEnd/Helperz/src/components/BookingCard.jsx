@@ -21,7 +21,7 @@ function BookingCard({
     booking.status === "pending" && appointmentPassed;
 
   return (
-    <div className=" min-w-sm max-w-md bg-white rounded-xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition">
+    <div className="min-w-55 md:min-w-sm max-w-md bg-white rounded-xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition">
 
       {/* Service */}
       <h2 className="text-xl line-clamp-1 wrap-anywhere  font-semibold text-gray-800">

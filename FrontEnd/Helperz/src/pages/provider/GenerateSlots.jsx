@@ -58,17 +58,7 @@ function GenerateSlots() {
     }
 }, [servicesData]);
 
-if (servicesIsLoading) {
-    return <p className="text-center mt-10">Loading...</p>;
-}
 
-if (servicesIsError) {
-    return (
-        <p className="text-center mt-10 text-red-600">
-            Error: {servicesError?.response?.data?.message || servicesError.message}
-        </p>
-    );
-}
 
     const toggleDay = (day) => {
         setWorkingDays((prevDays) => {
@@ -143,6 +133,18 @@ if (servicesIsError) {
             minute: "2-digit"
         });
     };
+
+    if (servicesIsLoading) {
+    return <p className="text-center mt-10">Loading...</p>;
+}
+
+if (servicesIsError) {
+    return (
+        <p className="text-center mt-10 text-red-600">
+            Error: {servicesError?.response?.data?.message || servicesError.message}
+        </p>
+    );
+}
 
     return (
         <div className="min-h-screen bg-gray-50 px-4 py-10">

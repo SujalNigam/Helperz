@@ -1,19 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 import useAuthStore from '../store/authStore'
 import { NavLink, useNavigate } from 'react-router-dom';
+
 function NavBar() {
     const token = useAuthStore((state)=>state.token);
     const savedRole = useAuthStore((state)=>state.role);
     const navigate = useNavigate();
+
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const logoutHandler = () => {
         useAuthStore.getState().logout();
         console.log("Logout Successful");
         navigate('/login');
     }
+
+
   return (
     <nav className='
-    flex justify-between
+    relative flex justify-between
     items-center 
     p-3
    bg-white/20
@@ -24,41 +29,121 @@ function NavBar() {
     sticky top-0
     z-50
     
-    '>
+    '>          
+                {/* Logo Helperz */}
+                <div className=' flex items-center justify-center '>
+                    <NavLink className='fruktur-regular-italic font-extrabold text-xl text-amber-800' to='/'> Helperz</NavLink>
+                </div>
+
+                <button
+                    onClick={() => setMenuOpen(!menuOpen)}
+                    className="md:hidden text-2xl px-2 py-1 rounded-lg hover:bg-gray-100 transition"
+                    aria-label={menuOpen ? "Close menu" : "Open menu"}
+                >
+                    {menuOpen ? '✕' : '☰'}
+                </button>
         {
             token? 
             (<>
-                <ul className=' flex items-center justify-center '>
-                    <li className='fruktur-regular-italic font-extrabold text-xl text-amber-800'> <NavLink to='/'>Helperz</NavLink></li>
-                </ul>
+                <div className=' hidden md:flex items-center justify-center gap-4'>
+                    <NavLink className='li-nav' to='/'>Home</NavLink>
+                    <NavLink className='li-nav' to={`/${savedRole}/dashboard`}>Dashboard</NavLink>
+                    <NavLink className='li-nav' to={`/${savedRole}/my-bookings`}>My Bookings</NavLink>
+                </div>
 
-                <ul className=' flex items-center justify-center gap-4'>
-                    <li className='li-nav'> <NavLink to='/'>Home</NavLink></li>
-                    <li className='li-nav'> <NavLink to={`/${savedRole}/dashboard`}>Dashboard</NavLink></li>
-                    <li className='li-nav'> <NavLink to={`/${savedRole}/my-bookings`}>My Bookings</NavLink></li>
-                </ul>
+                <div className=' hidden md:flex items-center justify-center gap-4'>   
+                    <NavLink className='li-nav' to='/profile'>Profile</NavLink>
+                    <button  className='li-nav' onClick={logoutHandler}>Logout</button>
+                </div>
 
-                <ul className=' flex items-center justify-center gap-4'>   
-                    <li className='li-nav'> <NavLink to='/profile'>Profile</NavLink></li>
-                    <li className='li-nav'> <button onClick={logoutHandler}>Logout</button></li>
-                </ul>
+                {menuOpen && (
+                    <div className="absolute top-full left-0 w-full bg-white shadow-md md:hidden">
+                        <div className="flex flex-col gap-3 p-4">
+
+                            <NavLink className='w-fit' to="/" onClick={() => setMenuOpen(false)}>
+                                Home
+                            </NavLink>
+
+                            <NavLink className='w-fit'
+                                to={`/${savedRole}/dashboard`}
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                Dashboard
+                            </NavLink>
+
+                            <NavLink className='w-fit'
+                                to={`/${savedRole}/my-bookings`}
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                My Bookings
+                            </NavLink>
+
+                            <NavLink className='w-fit'
+                                to="/profile"
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                Profile
+                            </NavLink>
+
+                            <button className='self-start' onClick={()=> { setMenuOpen(false);
+                            logoutHandler();}}>
+                                Logout
+                            </button>
+
+                        </div>
+                    </div>
+                )}
 
             </>
             ):
             (<>
-                <ul className='flex justify-center items-center'>
-                   <li className='li-nav'> <NavLink to='/'>Logo</NavLink></li>
-                </ul>
 
-                <ul className='flex justify-center gap-4 items-center'>
-                    <li className='li-nav'> <NavLink to='/'>Home</NavLink></li>
-                    <li className='li-nav'> <NavLink to='/services'>Services</NavLink></li>
-                    <li className='li-nav'> <NavLink to='/about'>About</NavLink></li>
-                </ul>
-                <ul className='flex justify-center gap-4 items-center'>
-                    <li className='li-nav'> <NavLink to='/login'>Login</NavLink></li>
-                    <li className='li-nav'> <NavLink to='/register'>Register</NavLink></li>
-                </ul>
+                <div className='hidden md:flex justify-center gap-4 items-center'>
+                    <NavLink className='li-nav' to='/'>Home</NavLink>
+                    <NavLink className='li-nav' to='/services'>Services</NavLink>
+                    <NavLink className='li-nav' to='/about'>About</NavLink>
+                </div>
+                <div className='hidden md:flex justify-center gap-4 items-center'>
+                    <NavLink className='li-nav' to='/login'>Login</NavLink>
+                    <NavLink className='li-nav' to='/register'>Register</NavLink>
+                </div>
+
+                {/* ---------------------- */}
+
+                {menuOpen && (
+                    <div className="absolute top-full left-0 w-full bg-white shadow-md md:hidden">
+                        <div className="flex flex-col gap-3 p-4">
+
+                            <NavLink className='w-fit' to="/" onClick={() => setMenuOpen(false)}>
+                                Home
+                            </NavLink>
+
+                            <NavLink className='w-fit'
+                                to={`/services`}
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                Services
+                            </NavLink>
+
+                            <NavLink className='w-fit'
+                                to={`/about`}
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                About
+                            </NavLink>
+
+                            <NavLink
+                                className='w-fit'
+                                to='/login'
+                                onClick={() => setMenuOpen(false)}>Login </NavLink>
+                            <NavLink
+                             className='w-fit' 
+                             to='/register'
+                             onClick={() => setMenuOpen(false)}>Register</NavLink>
+
+                        </div>
+                    </div>
+                )}
                 </>
             )
         }

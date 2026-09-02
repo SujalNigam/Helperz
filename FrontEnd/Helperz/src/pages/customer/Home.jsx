@@ -22,7 +22,7 @@ function Home() {
   return (
     <>
         <section className="bg-gradient-to-r from-blue-700 to-blue-100 text-white">
-  <div className="max-w-7xl mx-auto px-8 py-8 flex flex-col-reverse lg:flex-row items-center justify-between gap-12">
+  <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col-reverse lg:flex-row items-center justify-between gap-4 sm:gap-12">
 
     {/* Left */}
     <div className="flex-1">
@@ -31,7 +31,7 @@ function Home() {
         Trusted Home Services
       </p>
 
-      <h1 className="text-4xl lg:text-5xl font-bold leading-tight mt-4">
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mt-4">
         Reliable Services
         <br />
         <span className="text-amber-300">
@@ -39,7 +39,7 @@ function Home() {
         </span>
       </h1>
 
-      <div className="flex flex-wrap gap-4 mt-8">
+      <div className="flex flex-wrap gap-3 sm:gap-4 mt-8">
         <button className="bg-amber-400 hover:bg-amber-500 text-black font-semibold px-6 py-3 rounded-lg transition">
           Explore Services
         </button>
@@ -50,7 +50,7 @@ function Home() {
       </div>
 
       {/* Stats */}
-      <div className="flex gap-10 mt-10 flex-wrap">
+      <div className="flex gap-5 md:gap-10 mt-10 flex-wrap">
 
         <div>
           <h2 className="text-3xl font-bold">100+</h2>
@@ -72,11 +72,11 @@ function Home() {
     </div>
 
     {/* Right */}
-    <div className="max-h-[400px] flex-1 flex justify-center overflow-hidden z-50">
+    <div className=" flex-1 flex justify-center z-2 lg:z-50">
       <img
         src={heroImage}
         alt="Helperz Hero"
-        className="w-full h-full object-cover object-top max-w-lg drop-shadow-2xl"
+        className="w-full h-auto object-top max-w-xs  lg:max-w-lg drop-shadow-2xl"
       />
     </div>
 
@@ -114,7 +114,7 @@ function Home() {
         </div>
 
         {/* -------------------How it works-------------------- */}
-        <div className='flex justify-center items-center gap-12 my-5'>
+        <div className='flex text-gray-700 font-medium text-xs sm:text-base justify-center items-center gap-6 md:gap-12 mt-5 md:my-5 mx-2'>
             {howitworks.map((step)=>{
                 return <span key={step.id}>{step.content}</span>
             })}
