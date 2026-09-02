@@ -182,9 +182,6 @@ function ProviderDashboard() {
                             </div>):
                             bookingsData.bookings.length === 0 ? (<div className="flex flex-col justify-center items-center p-3">
                               <p className="text-gray-700 font-medium">No Upcoming Bookings yet</p>
-                              {/* <p className="text-gray-500 text-sm mt-1">
-                                Create a service to start receiving bookings.
-                              </p> */}
 
                               <button
                                 onClick={() => navigate("/provider/my-bookings",{

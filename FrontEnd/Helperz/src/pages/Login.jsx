@@ -36,22 +36,88 @@ function Login() {
 };
 
   return (
-    <>
-    
-    <div className='flex justify-center items-center m-20'>
-    <form className='border-2 shadow shadow-gray-600 rounded-sm w-fit border-gray-700 flex flex-col justify-center items-center p-15 m-2 bg-amber-100'
-     onSubmit={handleSubmit(onSubmit)}>
-        <input className='bg-white p-2 rounded-md border-2 border-gray-700 shadow shadow-gray-600' type='email' {...register("email", {required: "Email is required"})} placeholder='Enter email' />
-        {errors.email && <p>{errors.email.message}</p>}
-        <br></br>
-        <input className='bg-white p-2 rounded-md border-2 border-gray-700 shadow shadow-gray-600' type='password' {...register("password", {required: "Password is required"})} placeholder='Enter password' />
-        {errors.password && <p>{errors.password.message}</p>}
+  <div className="min-h-[70vh] flex justify-center items-center px-4">
 
-        <button className='bg-gray-700 text-white p-2 m-4 rounded-md ' type='submit'>Login</button>
+    <form
+      className="w-full max-w-md bg-white border border-gray-200
+                 rounded-xl shadow-sm p-8 flex flex-col gap-5"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+
+      {/* Heading */}
+      <div className="text-center mb-2">
+        <h1 className="text-2xl font-bold text-gray-800">
+          Welcome Back
+        </h1>
+
+        <p className="text-sm text-gray-500 mt-1">
+          Login to continue to Helperz
+        </p>
+      </div>
+
+      {/* Email */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Email
+        </label>
+
+        <input
+          type="email"
+          placeholder="Enter your email"
+          className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300
+                     rounded-lg text-black
+                     focus:outline-none focus:ring-2 focus:ring-blue-500
+                     focus:border-blue-500"
+          {...register("email", {
+            required: "Email is required"
+          })}
+        />
+
+        {errors.email && (
+          <p className="text-red-600 text-sm mt-1">
+            {errors.email.message}
+          </p>
+        )}
+      </div>
+
+      {/* Password */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Password
+        </label>
+
+        <input
+          type="password"
+          placeholder="Enter your password"
+          className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300
+                     rounded-lg text-black
+                     focus:outline-none focus:ring-2 focus:ring-blue-500
+                     focus:border-blue-500"
+          {...register("password", {
+            required: "Password is required"
+          })}
+        />
+
+        {errors.password && (
+          <p className="text-red-600 text-sm mt-1">
+            {errors.password.message}
+          </p>
+        )}
+      </div>
+
+      {/* Login button */}
+      <button
+        type="submit"
+        className="w-full py-2.5 rounded-lg bg-blue-600
+                   hover:bg-blue-700 text-white font-semibold
+                   transition-colors"
+      >
+        Login
+      </button>
+
     </form>
-    </div>
-    </>
-  )
+  </div>
+);
 }
 
 export default Login
