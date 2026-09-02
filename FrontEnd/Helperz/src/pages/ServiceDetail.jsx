@@ -253,7 +253,7 @@ const deleteMutation = useMutation({
 
             </div>
 
-          ) : role === "customer" ? (
+          ) :(
 
             <button
 
@@ -267,7 +267,7 @@ const deleteMutation = useMutation({
 
             </button>
 
-          ) : null}
+          )}
 
 
 
