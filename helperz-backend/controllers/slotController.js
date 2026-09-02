@@ -57,7 +57,16 @@ const getProviderSlots = async (req, res) => {
 const generateSlots = async (req, res) => {
      try {
         const { serviceId } = req.params;
-        const { workingDays, times } = req.body;
+        const { workingDays, times, slotsForNextDays } = req.body;
+
+        const numberOfDays = Number(slotsForNextDays) || 30;
+
+        if (numberOfDays < 1 || numberOfDays > 30) {
+            return res.status(400).json({
+                message: "Slots can only be generated for 1 to 30 days."
+            });
+        }
+
         const providerId = req.user.id;
 
         if (req.user.role !== "provider") {
@@ -101,7 +110,7 @@ const generateSlots = async (req, res) => {
         //create now
         const slots = [];
          
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < numberOfDays; i++) {
             const currentDate = new Date(today);
             currentDate.setDate(today.getDate() + i);
             const dayName = DAYS[currentDate.getDay()];
@@ -133,7 +142,8 @@ const generateSlots = async (req, res) => {
         }
         service.slotConfig = {
             workingDays,
-            times
+            times,
+            slotsForNextDays: numberOfDays
         };
 
         await service.save();
@@ -154,14 +164,67 @@ const generateSlots = async (req, res) => {
 };
 
 
+// const getAvailableSlots = async (req, res) => {
+//     try{
+//         const { serviceId } = req.params;
+//         const { date } = req.query;
+
+//         const service = await Service.findById(serviceId);
+//         if(!service){
+//             return res.status(404).json({message:'Service not found.'});
+//         }
+
+//         const query = {
+//             serviceId,
+//             status: "available"
+//         };
+
+//         if (date && isNaN(new Date(date).getTime())) {
+//                 return res.status(400).json({
+//                     message: "Invalid date."
+//                 });
+//             }
+
+//             if (date) {
+//             const start = new Date(date);
+//             start.setHours(0, 0, 0, 0);
+
+//             const end = new Date(start);
+//             end.setDate(end.getDate() + 1);
+
+//             query.date = {
+//                 $gte: start,
+//                 $lt: end
+//             };
+
+//         }
+
+        
+//             const slots = await Slot.find(query)
+//             .sort({
+//                 date: 1,
+//                 time: 1
+//             });
+//             return res.status(200).json({message:'Available Slots fetched successfully',slots}); 
+//         }
+//     catch(error){
+//         console.log(error);
+//         return res.status(500).json({message:'Internal Server Error'});
+//     }
+       
+// }
+
 const getAvailableSlots = async (req, res) => {
-    try{
+    try {
         const { serviceId } = req.params;
         const { date } = req.query;
 
         const service = await Service.findById(serviceId);
-        if(!service){
-            return res.status(404).json({message:'Service not found.'});
+
+        if (!service) {
+            return res.status(404).json({
+                message: 'Service not found.'
+            });
         }
 
         const query = {
@@ -170,12 +233,12 @@ const getAvailableSlots = async (req, res) => {
         };
 
         if (date && isNaN(new Date(date).getTime())) {
-                return res.status(400).json({
-                    message: "Invalid date."
-                });
-            }
+            return res.status(400).json({
+                message: "Invalid date."
+            });
+        }
 
-            if (date) {
+        if (date) {
             const start = new Date(date);
             start.setHours(0, 0, 0, 0);
 
@@ -186,23 +249,38 @@ const getAvailableSlots = async (req, res) => {
                 $gte: start,
                 $lt: end
             };
-
         }
 
-        
-            const slots = await Slot.find(query)
+        const currentTime = new Date();
+
+        const slots = await Slot.find(query)
             .sort({
                 date: 1,
                 time: 1
             });
-            return res.status(200).json({message:'Available Slots fetched successfully',slots}); 
-        }
-    catch(error){
+
+        const availableSlots = slots.filter((slot) => {
+            const appointmentDateTime = new Date(slot.date);
+
+            const [hours, minutes] = slot.time.split(":").map(Number);
+
+            appointmentDateTime.setHours(hours, minutes, 0, 0);
+
+            return appointmentDateTime > currentTime;
+        });
+
+        return res.status(200).json({
+            message: 'Available Slots fetched successfully',
+            slots: availableSlots
+        });
+
+    } catch (error) {
         console.log(error);
-        return res.status(500).json({message:'Internal Server Error'});
+        return res.status(500).json({
+            message: 'Internal Server Error'
+        });
     }
-       
-}
+};
 
 const updateSlotStatus = async (req, res) => {
     try {

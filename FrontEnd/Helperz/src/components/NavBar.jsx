@@ -52,7 +52,7 @@ function NavBar() {
 
                 <ul className='flex justify-center gap-4 items-center'>
                     <li className='li-nav'> <NavLink to='/'>Home</NavLink></li>
-                    <li className='li-nav'> <NavLink to='/'>Services</NavLink></li>
+                    <li className='li-nav'> <NavLink to='/services'>Services</NavLink></li>
                     <li className='li-nav'> <NavLink to='/about'>About</NavLink></li>
                 </ul>
                 <ul className='flex justify-center gap-4 items-center'>

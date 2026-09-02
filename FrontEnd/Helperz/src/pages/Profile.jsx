@@ -66,122 +66,167 @@ function Profile() {
   if (isError) return <p>Error: {error.message}</p>;
 
   return (
-    <>
-    <div className="min-h-screen bg-gray-100 py-10">
-      <h1 className="text-3xl font-bold text-center text-blue-800 mb-8">
+  <div className="min-h-screen bg-gray-50 px-4 py-10">
+
+    {/* Page Header */}
+    <div className="text-center mb-8">
+      <h1 className="text-3xl font-bold text-gray-800">
         My Profile
       </h1>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8"
-      >
-        <div className="flex flex-col items-center">
-          <div className="w-24 h-24 rounded-full bg-blue-200 flex items-center justify-center text-4xl font-bold text-blue-700">
-            {user.name[0].toUpperCase()}
-          </div>
+      <p className="text-gray-500 mt-2">
+        Manage your personal information
+      </p>
+    </div>
+
+    {/* Profile Card */}
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-lg mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8"
+    >
+
+      {/* Simple Profile Header */}
+      <div className="flex items-center gap-4 mb-6">
+
+        <div className="w-20 h-20 shrink-0 rounded-full bg-blue-100 flex items-center justify-center text-3xl font-bold text-blue-700">
+          {user.name?.[0]?.toUpperCase()}
+        </div>
+
+        <div className="min-w-0">
 
           {isEditing ? (
-            <input
-              {...register("name", {
-                required: "Name is required",
-              })}
-              className="border rounded p-2 mt-4 w-full"
-            />
+            <div>
+              <input
+                {...register("name", {
+                  required: "Name is required",
+                })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
           ) : (
-            <h2 className="text-2xl font-semibold mt-4">
+            <h2 className="text-2xl font-semibold text-gray-800 wrap-anywhere">
               {user.name}
             </h2>
           )}
 
-          {errors.name && (
-            <p className="text-red-500 text-sm">
-              {errors.name.message}
-            </p>
-          )}
+          <p className="text-sm text-gray-500 capitalize mt-1">
+            {user.role}
+          </p>
 
-          <p className="text-gray-500">{user.role}</p>
         </div>
 
-        <hr className="my-6" />
+      </div>
 
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm text-gray-500">Email</p>
+      <div className="border-t border-gray-200 my-6" />
 
-            <p className="font-medium">{user.email}</p>
+      {/* Information */}
+      <div className="space-y-5">
+
+        {/* Email */}
+        <div>
+          <p className="text-sm text-gray-500 mb-1">
+            Email Address
+          </p>
+
+          <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
+            <p className="font-medium text-gray-800 break-all">
+              {user.email}
+            </p>
           </div>
+        </div>
 
-          <div>
-            <p className="text-sm text-gray-500">Phone</p>
+        {/* Phone */}
+        <div>
+          <p className="text-sm text-gray-500 mb-1">
+            Phone Number
+          </p>
 
-            {isEditing ? (
-              <>
-                <input
-                  {...register("phone")}
-                  className="border rounded p-2 w-full"
-                />
+          {isEditing ? (
+            <>
+              <input
+                {...register("phone")}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter phone number"
+              />
 
-                {errors.phone && (
-                  <p className="text-red-500 text-sm">
-                    {errors.phone.message}
-                  </p>
-                )}
-              </>
-            ) : (
-              <p className="font-medium">{user.phone}</p>
-            )}
-          </div>
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.phone.message}
+                </p>
+              )}
+            </>
+          ) : (
+            <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
+              <p className="font-medium text-gray-800">
+                {user.phone || "Not provided"}
+              </p>
+            </div>
+          )}
+        </div>
 
-          <div>
-            <p className="text-sm text-gray-500">Role</p>
+        {/* Role */}
+        <div>
+          <p className="text-sm text-gray-500 mb-1">
+            Account Type
+          </p>
 
-            <p className="font-medium capitalize">
+          <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
+            <p className="font-medium text-gray-800 capitalize">
               {user.role}
             </p>
           </div>
         </div>
 
-        {isEditing ? (
-          <div className="flex gap-3 mt-8">
-            <button
-              type="submit"
-              disabled={mutation.isPending}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg"
-            >
-              {mutation.isPending
-                ? "Saving..."
-                : "Save Changes"}
-            </button>
+      </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                reset({
-                  name: user.name,
-                  phone: user.phone,
-                });
-                setIsEditing(false);
-              }}
-              className="flex-1 bg-gray-400 hover:bg-gray-500 text-white py-3 rounded-lg"
-            >
-              Cancel
-            </button>
-          </div>
-        ) : (
+      {/* Actions */}
+      {isEditing ? (
+        <div className="flex flex-col sm:flex-row gap-3 mt-8">
+
+          <button
+            type="submit"
+            disabled={mutation.isPending}
+            className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition-colors"
+          >
+            {mutation.isPending
+              ? "Saving..."
+              : "Save Changes"}
+          </button>
+
           <button
             type="button"
-            onClick={() => setIsEditing(true)}
-            className="mt-8 w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg"
+            onClick={() => {
+              reset({
+                name: user.name,
+                phone: user.phone,
+              });
+              setIsEditing(false);
+            }}
+            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-semibold transition-colors"
           >
-            Edit Profile
+            Cancel
           </button>
-        )}
-      </form>
-    </div>
-    
-    </>
-  );
+
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setIsEditing(true)}
+          className="mt-8 w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-semibold transition-colors"
+        >
+          Edit Profile
+        </button>
+      )}
+
+    </form>
+  </div>
+);
 }
 
 export default Profile;

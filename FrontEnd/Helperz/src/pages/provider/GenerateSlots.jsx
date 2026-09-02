@@ -1,12 +1,15 @@
-import React, { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import React, { useState,useEffect } from "react";
 import { generateSlots } from "../../api/slots";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getServiceById } from "../../api/services";
 
 function GenerateSlots() {
+    
     const [workingDays, setWorkingDays] = useState([]);
     const [times, setTimes] = useState([]);
+    const [slotsForNextDays, setSlotsForNextDays] = useState(30);
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -38,6 +41,35 @@ function GenerateSlots() {
         "20:00"
     ];
 
+    const { data:servicesData, isLoading:servicesIsLoading,isError:servicesIsError, error:servicesError } = useQuery({
+        queryKey: ["service", id],
+        queryFn: () => getServiceById(id)
+    });
+
+    
+
+    useEffect(() => {
+    if (servicesData?.service?.slotConfig) {
+        setWorkingDays(servicesData.service.slotConfig.workingDays || []);
+        setTimes(servicesData.service.slotConfig.times || []);
+        setSlotsForNextDays(
+            servicesData.service.slotConfig.slotsForNextDays || 30
+        );
+    }
+}, [servicesData]);
+
+if (servicesIsLoading) {
+    return <p className="text-center mt-10">Loading...</p>;
+}
+
+if (servicesIsError) {
+    return (
+        <p className="text-center mt-10 text-red-600">
+            Error: {servicesError?.response?.data?.message || servicesError.message}
+        </p>
+    );
+}
+
     const toggleDay = (day) => {
         setWorkingDays((prevDays) => {
             if (prevDays.includes(day)) {
@@ -62,7 +94,8 @@ function GenerateSlots() {
         mutationFn: () =>
             generateSlots(id, {
                 workingDays,
-                times
+                times,
+                slotsForNextDays
             }),
 
         onSuccess: (data) => {
@@ -210,6 +243,33 @@ function GenerateSlots() {
                         )}
                     </div>
 
+                    {/* Availability Period */}
+<div className="border-t border-gray-200 my-8" />
+
+<div>
+    <h2 className="text-lg font-semibold text-gray-800">
+        Availability Period
+    </h2>
+
+    <p className="text-sm text-gray-500 mt-1 mb-4">
+        Choose how many days in advance customers can book this service.
+    </p>
+
+    <select
+        value={slotsForNextDays}
+        onChange={(e) => setSlotsForNextDays(Number(e.target.value))}
+        className="w-full sm:w-64 px-4 py-3 rounded-lg border border-gray-300
+                   text-gray-700 bg-white
+                   focus:outline-none focus:ring-2 focus:ring-blue-500
+                   focus:border-blue-500"
+    >
+        <option value={7}>7 days</option>
+        <option value={14}>14 days</option>
+        <option value={21}>21 days</option>
+        <option value={30}>30 days</option>
+    </select>
+</div>
+
                     {/* Info */}
                     <div className="mt-8 p-4 rounded-lg bg-blue-50 border border-blue-100">
                         <p className="text-sm text-blue-800">
@@ -218,7 +278,7 @@ function GenerateSlots() {
                             </span>{" "}
                             Slots will be generated for the next{" "}
                             <span className="font-semibold">
-                                30 days
+                                {slotsForNextDays} days
                             </span>{" "}
                             based on your selected working days and start
                             times.
@@ -238,7 +298,7 @@ function GenerateSlots() {
                     >
                         {generateMutation.isPending
                             ? "Generating Slots..."
-                            : "Generate 30 Days of Slots"}
+                            : `Generate ${slotsForNextDays} Days of Slots`}
                     </button>
 
                 </div>

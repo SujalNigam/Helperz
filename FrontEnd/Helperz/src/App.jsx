@@ -4,6 +4,7 @@ import ProtectedRoutes from './components/ProtectedRoutes';
 import NavBar from './components/NavBar';
 import { getMe } from './api/auth';
 import useAuthStore from './store/authStore';
+import ScrollToTop from './components/ScrollToTop';
 
 // import CreateService from './pages/provider/CreateService';
 // import ServiceDetail from './pages/ServiceDetail';
@@ -28,6 +29,7 @@ const GenerateSlots = lazy(()=>import('./pages/provider/GenerateSlots'));
 const ManageSlots = lazy(()=>import('./pages/provider/ManageSlots'));
 const MyBookings = lazy(()=> import('./pages/customer/MyBookings'));
 const ProviderMyBookings = lazy(()=> import('./pages/provider/ProviderMyBookings'));
+const AllServices = lazy(()=>import('./pages/AllServices'));
 // const Footer = lazy(()=> import('./components/Footer'));
 
 
@@ -44,6 +46,7 @@ function App() {
 }, []);
   return (
     <Suspense fallback={<div><BarLoader/></div>}>
+     <ScrollToTop />
     <div className='min-h-screen flex flex-col'>
     <NavBar/>
     <main className='flex-1'>
@@ -52,6 +55,7 @@ function App() {
         <Route path='/profile' element  = {<Profile/>} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path="/services" element={<AllServices />} />
         
         <Route path='/customer/dashboard' element={
           <ProtectedRoutes allowedRole={'customer'}>

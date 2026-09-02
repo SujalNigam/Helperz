@@ -24,8 +24,12 @@ const serviceSchema = new mongoose.Schema({
     }],
     times: [{
         type: String
-    }]
-  },
+    }],
+    slotsForNextDays: {
+        type: Number,
+        default: 30
+    }
+},
   
 },{
   timestamps:true
