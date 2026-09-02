@@ -115,7 +115,7 @@ function ProviderDashboard() {
                             </div>
                             ):
         (<div> 
-          <div className="flex gap md:gap-4 flex-wrap justify-center">
+          <div className="flex gap-2 md:gap-4 flex-wrap justify-center">
           {servicesData.services.map((service) => {
             return <Card key={service._id} service={service} showDelete={true} onDelete={handleDelete} showEdit={true}/>;
           })}
