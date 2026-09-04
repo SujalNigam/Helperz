@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import {useForm} from 'react-hook-form';
 import useAuthStore from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
@@ -7,12 +7,14 @@ import { useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 function Login() {
-
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const {register, handleSubmit, formState : { errors } } = useForm();
     const onSubmit = async (data) => {
     try {
+        setIsSubmitting(true);
+
         const { token, user } = await loginUser(data);
 
         useAuthStore.getState().login(user, token);
@@ -32,6 +34,9 @@ function Login() {
         toast.error(
             error.response?.data?.message || "Login failed"
         );
+    }
+    finally {
+      setIsSubmitting(false);
     }
 };
 
@@ -108,11 +113,12 @@ function Login() {
       {/* Login button */}
       <button
         type="submit"
+        disabled={isSubmitting}
         className="w-full py-2.5 rounded-lg bg-blue-600
                    hover:bg-blue-700 text-white font-semibold
                    transition-colors"
       >
-        Login
+        {isSubmitting? 'Logging In...':'Login' }
       </button>
 
     </form>

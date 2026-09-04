@@ -10,8 +10,10 @@ function Card({service,showDelete,onDelete,showEdit}) {
     rounded-md
     flex flex-col justify-center items-center
     border-2 border-amber-800
-    min-w-30
-    max-w-60
+    min-w-50
+    max-w-50
+    md:min-w-60
+    md:max-w-60
     bg-white
     px-3 py-3
     cursor-pointer
