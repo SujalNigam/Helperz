@@ -29,7 +29,6 @@ function ProviderDashboard() {
     mutationFn: ({ id, status }) => updateBookingStatus(id, status),
 
     onSuccess: (data, variables) => {
-      console.log(variables.status);
       queryClient.invalidateQueries({
         queryKey: ['providerBookings',bookingPage,type]
       });
@@ -142,9 +141,7 @@ function ProviderDashboard() {
                 </button>
             </div>
         </div>)}
-        {/* ==================== */}
-        
-        {/* ---------------------- */}
+
       <div className="flex justify-center items-center p-3">
         <button
           onClick={() => navigate("/provider/create-service")}
@@ -155,7 +152,6 @@ function ProviderDashboard() {
       </div>
       </div>
 
-      {/* ------------ */}
       {
         <div>
           <h2 className="flex justify-center items-center text-2xl p-2 mb-2 mt-2 text-gray-100 bg-blue-800 ">

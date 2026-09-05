@@ -27,7 +27,6 @@ const register = async (req, res) => {
         const updatedUser = user.toObject();
         delete updatedUser.password;
 
-            //   const user = User.save();
   // 5. generate token
     const token = jwt.sign(
         { id: updatedUser._id, role: updatedUser.role },
@@ -39,14 +38,8 @@ const register = async (req, res) => {
 return res.status(201).json({ token, user:updatedUser })
   }
 catch(error){
-    console.log(error);
     res.status(500).json({message:error.message});
-}
-  
-// 
-  
-  // 6. send response
-}
+}}
 
 
 const login = async(req,res) => {
@@ -100,12 +93,10 @@ const getMe = async (req,res) => {
         return res.status(400).json({message:'User does not exists in DB'});
     }
 
-    console.log(user);
 
     return res.status(200).json({user,message:'User ME fetched successfully'});
 }
 catch(error){
-    console.log(error);
     return res.status(500).json({message:error.message});
 }
 
@@ -147,7 +138,6 @@ const editProfile = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error);
 
         return res.status(500).json({
             message: error.message

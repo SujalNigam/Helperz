@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
 const serviceSchema = new mongoose.Schema({
-  // fields here id,title, icon ,price,description
   title: { type: String, required: true},
   image: {
     url: {
@@ -13,7 +12,6 @@ const serviceSchema = new mongoose.Schema({
         default: ""
     }
 },
-  // icon: { type: String, required: true },
 
   price: { type: Number, required: true},
   description: {type: String, required: true},

@@ -23,7 +23,12 @@ const blockUnblockUser = async (req,res) => {
         
         const currentUser = req.user;
         const userId = req.params.id;
+        if(currentUser.role!=='admin'){
+            return res.status(403).json({message:'Only Admin can access block unblock users.'})
+        }
+       
         const user = await User.findById(userId);
+
         if(!user){
             return res.status(400).json({message:'No user exists'});
         }

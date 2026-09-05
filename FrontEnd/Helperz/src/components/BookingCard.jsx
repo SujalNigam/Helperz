@@ -1,5 +1,4 @@
 import React from 'react';
-import { formatDate } from '../utils/formatDate';
 
 function BookingCard({
   booking,
@@ -10,7 +9,6 @@ function BookingCard({
 }) {
   const customerName = booking.contactName || booking.customerId?.contactName;
   const appointmentPassed = new Date(booking.appointmentDateTime) < new Date();
-  // console.log(booking);
   const statusColors = {
     pending: "bg-yellow-100 text-yellow-700",
     accepted: "bg-green-100 text-green-700",

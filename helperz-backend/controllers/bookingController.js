@@ -2,7 +2,6 @@ const Booking = require('../models/Booking');
 const Slot = require('../models/Slot');
 const Service = require('../models/Service');
 const mongoose = require("mongoose");
-// const authMiddleware = require('../middleware/authMiddleware');
 
 
 const createBooking = async (req, res) => {
@@ -11,7 +10,6 @@ const createBooking = async (req, res) => {
     try {
         // TODO: Make slot booking atomic or use MongoDB transaction. To prevent race conditions when two customers book simultaneously.
         
-        // const { slotId, serviceId, price, providerId,address, name } = req.body;
         const { slotId, address, contactName,contactNumber } = req.body;
 
         const customerId = req.user.id;
@@ -19,13 +17,11 @@ const createBooking = async (req, res) => {
         
 
         if(!role){
-            console.log('Not Logged In');
-            return res.status(400).json({message:'Not Logged In, trying to create booking'});
+            return res.status(403).json({message:'Not Logged In, trying to create booking'});
         }
 
         if(role!=='customer'){
-            console.log('Other than customer trying to create booking. Not possible!')
-            return res.status(400).json({message:'Other than customer trying to create booking. Not possible!'})
+            return res.status(403).json({message:'Other than customer trying to create booking. Not possible!'})
         }
         if (!slotId || !contactName || !address || !contactNumber) {
             return res.status(400).json({
@@ -96,10 +92,6 @@ const getProviderBookings = async(req, res)=>{
         const limitNumber = Number(limit);
         const now = new Date();
         const skip = (pageNumber - 1) * limitNumber;
-    //    const bookings = await Booking.find({providerId:providerId})
-    //    .populate('customerId','name email')
-    //    .populate('serviceId','title price')
-    //    .populate('slotId','date time');
 
     if (type !== "upcoming" && type !== "past") {
         return res.status(400).json({
@@ -114,8 +106,6 @@ const getProviderBookings = async(req, res)=>{
 
     const sortOrder = type === "past" ? -1 : 1;
 
-    //    const bookings = await Booking.find({providerId:providerId})
-    //    .
     const result = await Booking.aggregate([
         {
             $match: {
@@ -202,8 +192,6 @@ const getProviderBookings = async(req, res)=>{
 
     const hasNextPage = pageNumber < totalPages;
 
-    console.log('Provider Bookings',bookings);
-
         return res.status(200).json({message:'Bookings are fetched successfully',bookings:bookings,pagination: {
         currentPage:pageNumber,
         totalPages,
@@ -211,10 +199,8 @@ const getProviderBookings = async(req, res)=>{
         hasNextPage
     }});
 
-        // return res.status(200).json({message:'Bookings are fetched successfully',bookings:bookings});
     }
     catch(error){
-        console.log(error);
         return res.status(500).json({message:error.message});
     }
 }
@@ -222,6 +208,9 @@ const getProviderBookings = async(req, res)=>{
 const getBookings = async(req, res)=>{
     try{
        const role = req.user.role;
+       if(role!=='admin'){
+        return res.status(403).json({message:'Only admin can access all the bookings'});
+       }
        const bookings = await Booking.find()
        .populate('customerId','name email')
        .populate('serviceId','title price')
@@ -234,7 +223,6 @@ const getBookings = async(req, res)=>{
         return res.status(200).json({message:'All Bookings are fetched successfully',bookings:bookings});
     }
     catch(error){
-        console.log(error);
         return res.status(500).json({message:error.message});
     }
 }
@@ -245,18 +233,9 @@ const getCustomerBookings = async(req, res)=>{
         const { page = 1, limit = 5,type='upcoming' } = req.query;
 
         const pageNumber = Number(page);
-        // const currentPage = pageNumber;
         const limitNumber = Number(limit);
         const now = new Date();
         const skip = (pageNumber - 1) * limitNumber;
-        // const totalBookings = await Booking.countDocuments({customerId:customerId});
-        // const totalPages = Math.ceil(totalBookings / limitNumber);
-        // const hasNextPage = pageNumber < totalPages;
-
-    //    const bookings = await Booking.find({customerId:customerId}).skip(skip).limit(limitNumber)
-    //    .populate('customerId','name email')
-    //    .populate('serviceId','title price')
-    //    .populate('slotId','date time');
     
     if (type !== "upcoming" && type !== "past") {
     return res.status(400).json({
@@ -356,7 +335,6 @@ const totalPages = Math.ceil(totalBookings / limitNumber);
 
 const hasNextPage = pageNumber < totalPages;
 
-console.log('Customer BOokings',bookings);
 
 
         return res.status(200).json({message:'Bookings are fetched successfully',bookings:bookings,pagination: {
@@ -368,7 +346,6 @@ console.log('Customer BOokings',bookings);
 
     }
     catch(error){
-        console.log(error);
         return res.status(500).json({message:error.message});
     }
 }
@@ -390,13 +367,10 @@ const updateBookingStatus = async(req,res)=>{
             });
         }
         if(booking.providerId.toString() !== req.user.id){
-            return res.status(400).json({message:'You can only update your bookings'});
+            return res.status(403).json({message:'You can only update your bookings'});
         }
         booking.status = status;
         await booking.save();
-        // const booking = await Booking.findByIdAndUpdate({_id: bookingId},{
-        //     status
-        // },{new:true});
 
 
 
@@ -416,16 +390,13 @@ const cancelBooking = async(req,res)=>{
             return res.status(401).json({message:'bookingId not reached to backend'});
         }
 
-        // const booking = await Booking.findByIdAndUpdate({_id: bookingId},{
-        //     status:'cancelled'
-        // },{new:true});
 
         const existingBooking = await Booking.findById(bookingId)
             .populate('slotId', 'date time');
 
             
             if(userRole!='customer'){
-                return res.status(400).json({message:"Role is not customer"});
+                return res.status(403).json({message:"Only Customer can cancel their bookings"});
             }
 
             if (!existingBooking) {
@@ -435,7 +406,7 @@ const cancelBooking = async(req,res)=>{
             }
 
         if(userId!=existingBooking.customerId.toString()){
-            return res.status(400).json({message:"You are trying to delete someone else's booking. Not possible!"});
+            return res.status(403).json({message:"You are trying to delete someone else's booking. Not possible!"});
         }
 
         const slot = existingBooking.slotId;
@@ -456,9 +427,6 @@ const cancelBooking = async(req,res)=>{
             });
         }
 
-        if(userRole!='customer'){
-            return res.status(400).json({message:"Role is not customer"});
-        }
 
         const updatedBooking = await Booking.findByIdAndUpdate({_id: bookingId},{
             status:'cancelled'

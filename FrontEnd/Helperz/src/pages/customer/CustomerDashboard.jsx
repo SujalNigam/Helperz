@@ -1,6 +1,5 @@
 import React from 'react'
 import { useState } from 'react';
-import useAuthStore from '../../store/authStore'
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/Card';
 import {useQuery} from '@tanstack/react-query';
@@ -54,9 +53,6 @@ function CustomerDashboard() {
         <div className='mb-2'>
             <h2 className='flex justify-center items-center text-2xl p-2 mb-2 text-gray-100 bg-blue-800 '>My Bookings</h2>
         
-            {/* <h2 className="text-2xl font-bold text-gray-800 text-center mt-5 mb-5">
-  My Bookings
-</h2> */}
         <div className='flex gap-4 flex-wrap justify-center'>
         {   isLoadingB ? (<div className='flex gap-4 flex-wrap justify-center'>
                             {[1,2,3].map(i => <SkeletonProviderBookingCard key={i} />)}

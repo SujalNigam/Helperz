@@ -31,18 +31,14 @@ const MyBookings = () => {
             toast.success('Booking Cancelled Successfully');
         },
         onError:(error)=>{
-            // console.log(error.message);
             toast.error(error.response?.data?.message||'Booking cancellation failed!');
         }
     })
 
     const handleCancel = (id) => {
-            // const b = await cancelBooking(id);
             cancelMutation.mutate(id);
-            // console.log("request is cancelled", id);
         }
 
-    console.log(data);
 
     return (
         <div >

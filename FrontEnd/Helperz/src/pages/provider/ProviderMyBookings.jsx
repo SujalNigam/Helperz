@@ -28,7 +28,6 @@ const updateMutation = useMutation({
     mutationFn: ({ id, status }) => updateBookingStatus(id, status),
 
     onSuccess: (data, variables) => {
-      console.log(variables.status);
       queryClient.invalidateQueries({
         queryKey: ['provider-my-bookings', type, page]
       });
@@ -79,7 +78,6 @@ const updateMutation = useMutation({
         </button>
                 </div>
 
-            {/* {isLoading && <p>Loading...</p>} */}
 
             {isError && <p>Error: {error.message}</p>}
 
@@ -112,7 +110,8 @@ const updateMutation = useMutation({
                         }
                             </div>
                         </div>
-                        {/* ---------------- */}
+
+                        
             <div className="flex justify-center items-center gap-4 mt-8">
                 <button
                     disabled={page === 1}

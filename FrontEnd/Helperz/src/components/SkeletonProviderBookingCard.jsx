@@ -5,7 +5,6 @@ function SkeletonProviderBookingCard() {
       <div className="bg-gray-300 h-4 w-20 rounded mb-2"></div>
       <div className="bg-gray-300 h-4 w-30 rounded mb-2"></div>
       <div className="bg-gray-300 h-4 w-40 rounded mb-2"></div>
-      {/* <div className=" bg-gray-300 h-4 w-10 rounded mb-2"></div> */}
       <div className=" flex justify-between border-gray-200 min-w-70 bg-gray-100 px-1 py-1 animate-pulse">
          <div className=" bg-gray-300 h-4 w-10 rounded-xl"></div>
          <div className=" bg-gray-300 h-4 w-6 rounded-xl"></div>

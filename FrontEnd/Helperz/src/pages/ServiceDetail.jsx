@@ -48,13 +48,6 @@ const deleteMutation = useMutation({
 
     const user = useAuthStore((state)=>state.user);
 
-
-
-    // console.log("Hi");
-
-
-
-
     const {data, isLoading, isError, error} = useQuery({
 
         queryKey:['service',id],

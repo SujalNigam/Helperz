@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 function Register() {
     const navigate = useNavigate();
 
-    const submitHanlder = async (data) => {
+    const submitHandler = async (data) => {
         try {
             const { token, user } = await registerUser(data);
 
@@ -17,8 +17,7 @@ function Register() {
             toast.success('Registered Successfully');
 
             navigate(`/${user.role}/dashboard`);
-        }
-        catch (error) {
+        } catch (error) {
             toast.error(
                 error.response?.data?.message || error.message
             );
@@ -28,7 +27,7 @@ function Register() {
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        formState: { errors, isSubmitting }
     } = useForm();
 
     return (
@@ -37,7 +36,7 @@ function Register() {
             <form
                 className="w-full max-w-md bg-white border border-gray-200
                            rounded-xl shadow-sm p-8 flex flex-col gap-5"
-                onSubmit={handleSubmit(submitHanlder)}
+                onSubmit={handleSubmit(submitHandler)}
             >
 
                 {/* Heading */}
@@ -155,12 +154,16 @@ function Register() {
 
                 {/* Submit */}
                 <button
-                    className="w-full py-2.5 rounded-lg bg-blue-600
-                               hover:bg-blue-700 text-white font-semibold
-                               transition-colors"
                     type="submit"
+                    disabled={isSubmitting}
+                    className={`w-full py-2.5 rounded-lg text-white font-semibold
+                               transition-colors ${
+                        isSubmitting
+                            ? "bg-gray-600 cursor-not-allowed"
+                            : "bg-blue-600 hover:bg-blue-700"
+                    }`}
                 >
-                    Sign Up
+                    {isSubmitting ? 'Signing Up...' : 'Sign Up'}
                 </button>
 
             </form>
@@ -169,3 +172,4 @@ function Register() {
 }
 
 export default Register;
+

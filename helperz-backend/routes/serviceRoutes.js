@@ -15,7 +15,6 @@ router.get('/getServices', getServices);
 router.get('/getProviderServices',authMiddleware, getProviderServices);
 router.put('/editService/:id',authMiddleware, upload.single("image"), editService);
 router.delete('/deleteService/:id',authMiddleware, deleteService);
-// router.put('/getProviderServices',authMiddleware, getProviderServices);
 router.get('/:id', getServiceByID);
 
 

@@ -5,16 +5,12 @@ import NavBar from './components/NavBar';
 import { getMe } from './api/auth';
 import useAuthStore from './store/authStore';
 import ScrollToTop from './components/ScrollToTop';
-
-// import CreateService from './pages/provider/CreateService';
-// import ServiceDetail from './pages/ServiceDetail';
 import {BarLoader} from 'react-spinners';
 import Footer from './components/Footer';
 const Home = lazy(() => import('./pages/customer/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const CustomerDashboard = lazy(() => import('./pages/customer/CustomerDashboard'));
-// import CustomerDashboard from './pages/customer/CustomerDashboard';
 const ProviderDashboard = lazy(() => import('./pages/provider/ProviderDashboard'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const UnAuthorized = lazy(()=> import('./pages/UnAuthorized'));
@@ -22,7 +18,6 @@ const ServiceDetail = lazy(()=>import('./pages/ServiceDetail'));
 const Booking = lazy(() => import('./pages/customer/Booking'));
 const CreateService = lazy(()=>import('./pages/provider/CreateService'));
 const NotFound = lazy(()=>import('./pages/NotFound'));
-// import EditService from './pages/provider/EditService';
 const EditService = lazy(()=>import('./pages/provider/EditService'));
 const Profile = lazy(()=>import('./pages/Profile'));
 const GenerateSlots = lazy(()=>import('./pages/provider/GenerateSlots'));
@@ -30,7 +25,6 @@ const ManageSlots = lazy(()=>import('./pages/provider/ManageSlots'));
 const MyBookings = lazy(()=> import('./pages/customer/MyBookings'));
 const ProviderMyBookings = lazy(()=> import('./pages/provider/ProviderMyBookings'));
 const AllServices = lazy(()=>import('./pages/AllServices'));
-// const Footer = lazy(()=> import('./components/Footer'));
 
 
 

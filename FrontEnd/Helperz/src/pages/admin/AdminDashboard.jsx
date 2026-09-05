@@ -1,7 +1,3 @@
-import React from 'react'
-// import { services } from '../../utils/dummyData';
-// import { bookings } from '../../utils/dummyBookings';
-// import { users } from '../../utils/dummyUsers';
 import {useQuery} from '@tanstack/react-query'
 import UserCard from '../../components/UserCard';
 import Card from '../../components/Card';

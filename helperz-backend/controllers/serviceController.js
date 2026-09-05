@@ -4,19 +4,13 @@ const Booking = require('../models/Booking');
 const cloudinary = require("../config/cloudinary");
 
 const createService = async (req, res) => {
-    //get things from req
 
     try{
-            console.log("Iam reqbody",req.body);
-            console.log("Iam reqfile",req.file);
+           
         const {title,icon,price,description} = req.body;
         const providerId = req.user.id;
 
-        // if (!title || !icon || !price || !description) {
-        //         return res.status(400).json({
-        //             message: "All fields are required"
-        //         });
-        //     }
+        
         
         if (!title || !price || !description) {
                 return res.status(400).json({
@@ -31,8 +25,7 @@ const createService = async (req, res) => {
             }
 
         const uploadResult = await cloudinary.uploader.upload(req.file.path);
-        // console.log(uploadResult);
-        //set it to DB
+        
         
         const service = await Service.create({
                 title,
@@ -48,12 +41,11 @@ const createService = async (req, res) => {
     
 
     
-        // console.log(service);
+       
         return res.status(201).json({message:'Service created Successfully',service});
 
     }   
     catch(error){
-        console.log(error.message);
         return res.status(500).json({message:error.message});
     } 
 
@@ -62,9 +54,8 @@ const createService = async (req, res) => {
 const editService = async(req,res) => {
 
     try{
-            console.log("Iam reqbody in edit",req.body);
-            console.log("Iam reqfile in edit",req.file);
-        // const {title,icon,price,description} = req.body;
+        
+        
         const {title,price,description} = req.body;
         const role = req.user.role;
         const loggedInProviderId = req.user.id;
@@ -74,9 +65,7 @@ const editService = async(req,res) => {
 
 
 
-        // if(!role){
-        //     return res.status(400).json({message:'Token not provided!'});
-        // }
+       
         if(role!=='provider'){
             return res.status(403).json({message:'Only provider can edit service!'});
         }
@@ -89,7 +78,7 @@ const editService = async(req,res) => {
                 });
             }
 
-        // if(!title || !icon || !price || !description){
+        
         if(!title || !price || !description){
             return res.status(400).json({message:'Data is missing somewhere!'});
         }
@@ -106,25 +95,24 @@ const editService = async(req,res) => {
             return res.status(403).json({message:'You can only edit your services'});
         }
         
-// -----------------------------
+
         let image = service.image;
 
 
     if(req.file){
-        // await cloudinary.uploader.destroy(service.image.public_id);
+
         const uploadResult = await cloudinary.uploader.upload(req.file.path);
-                // image  = uploadResult.image;
+          
                 image = {
                     url: uploadResult.secure_url,
                     public_id: uploadResult.public_id
                 };
             }
 
-        // ------------------------
+     
 
-        const updatedService = await Service.findByIdAndUpdate(serviceId,{
+const updatedService = await Service.findByIdAndUpdate(serviceId,{
             title,
-            // icon,
             image,
             price,
             description
@@ -134,7 +122,7 @@ const editService = async(req,res) => {
             try {
                 await cloudinary.uploader.destroy(service.image.public_id);
             } catch (err) {
-                console.log("Failed to delete old Cloudinary image:", err.message);
+                return res.status(500).json({message:'Image Upload Error'});
             }
         }
 
@@ -143,7 +131,7 @@ const editService = async(req,res) => {
         
     }
     catch(error){
-        console.log(error.message);
+       
         return res.status(500).json({message:error.message});
     }
 }
@@ -204,8 +192,7 @@ const getServices = async(req,res)=> {
         const limitNumber = Number(limit);
         const pageNumber = Number(page);
         const skip = (pageNumber - 1) * limitNumber;
-        //get services from DB
-        // const services = await Service.find();
+       
         const result = await Service.aggregate([
             {
                 $facet: {
@@ -240,7 +227,7 @@ const getServices = async(req,res)=> {
 
     const hasNextPage = pageNumber < totalPages;
 
-    console.log('All Services',services);
+    
 
 
         
@@ -291,8 +278,6 @@ const getProviderServices = async (req, res) => {
         const limitNumber = Number(limit);
         const pageNumber = Number(page);
         const skip = (pageNumber - 1) * limitNumber;
-        // const services = await Service.find({ providerId });
-        // services
         const result = await Service.aggregate([
             {
                 $match: {
@@ -331,7 +316,7 @@ const getProviderServices = async (req, res) => {
 
     const hasNextPage = pageNumber < totalPages;
 
-    console.log('Provider Services',services);
+   
 
         
         
@@ -344,7 +329,7 @@ const getProviderServices = async (req, res) => {
     }
          });
     } catch (error) {
-        console.log(error);
+   
         return res.status(500).json({ message: error.message });
     }
 }

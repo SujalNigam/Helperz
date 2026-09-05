@@ -5,7 +5,6 @@ const useAuthStore = create((set) => ({
   role: localStorage.getItem("role") || null,
   token: localStorage.getItem("token") || null,
   login: (user, token) => {
-    console.log('storing role:', user.role); // add this
     localStorage.setItem('token',token);
     localStorage.setItem('role',user.role);
     set({ user, token,role:user.role });

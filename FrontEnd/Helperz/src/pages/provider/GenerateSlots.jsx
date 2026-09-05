@@ -89,7 +89,6 @@ function GenerateSlots() {
             }),
 
         onSuccess: (data) => {
-            console.log(data);
 
             toast.success("Slots generated successfully!");
 

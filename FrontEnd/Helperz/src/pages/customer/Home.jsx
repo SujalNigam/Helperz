@@ -17,7 +17,6 @@ function Home() {
     if(isError){
         return <p>Error: {error.message}</p>
     }
-    console.log(data);
     const services = data?.services;
   return (
     <>

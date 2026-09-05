@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
 const bookingSchema = new mongoose.Schema({
-  // fields here id,customerName, service, time, status
   contactName: {type: String, required:true},
   contactNumber: {type:Number, required:true},
   serviceId: { type: mongoose.Schema.Types.ObjectId, ref:'Service', required: true},
@@ -19,7 +18,6 @@ serviceName: {
     type: String,
     required: true
 }
-//   customerName:{type: String, required: true}
 })
 
 module.exports = mongoose.model('Booking', bookingSchema);

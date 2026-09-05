@@ -23,8 +23,6 @@ function Card({service,showDelete,onDelete,showEdit}) {
     hover:shadow-xl
   ">
 
-        {/* <p>{service.id}</p>    */}
-        {/* <p>{service.icon}</p>   */}
         {service.image.url ? (
             <img
                 src={service.image.url}
